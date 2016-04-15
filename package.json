@@ -35,7 +35,8 @@
       "platform": "ios",
       "version": "",
       "locator": "ios"
-    }
+    },
+    "android"
   ],
   "name": "app",
   "description": "app: An Ionic project"
