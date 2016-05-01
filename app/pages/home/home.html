@@ -1,18 +1,13 @@
-
-
 <ion-content class="home">
+  
   <ion-item>
-    <ion-input type="text" placeholder="City"></ion-input>
+    <ion-input [(ngModel)]="location.name" type="text"></ion-input>
+    <button block (click)="getTides()">Search</button>
   </ion-item>
 
-  <ion-card>
-    <ion-card-header>
-      Card Header
-    </ion-card-header>
-    <ion-card-content>
-      Hello World
-    </ion-card-content>
-  </ion-card>
-
+  <div class="day">
+    <h1>Today is {{time.getDay() + time.getDate()}}</h1>
+    <strong>{{time.getMonth()}}</strong>
+  </div>
 
 </ion-content>
