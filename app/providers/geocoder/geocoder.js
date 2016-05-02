@@ -23,15 +23,7 @@ export class Geocoder {
 
 		var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng,
 			name = 'Error';
-		this.http.get(url).map(res => res.json()).subscribe(data => {
-
-			if(data.status === "OK") {
-				return data.results[1].address_components[0].long_name;
-			}
-			else {
-				return 'Erreur';
-			}
-		});
+		return this.http.get(url);
 		
 	}
   

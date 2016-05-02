@@ -65,8 +65,8 @@ export class HomePage {
 
 			if(now > this.tides.extremes[i].dt) {
 				var day 	= new Date(this.tides.extremes[i].date),
-					hour 	= day.getUTCHours(),
-					min 	= day.getUTCMinutes();
+					hour 	= day.getHours(),
+					min 	= day.getMinutes();
 				this.extremes[0] = {
 					type: this.tides.extremes[i].type,
 					hour: hour+':'+min
@@ -87,7 +87,15 @@ export class HomePage {
 	}
 
 	getLocationName(lat, lng) {
-		this.location.name = this.geocoder.getLocationName(lat, lng);
+		this.location.name = this.geocoder.getLocationName(lat, lng).map(res => res.json()).subscribe(data => {
+
+			if(data.status === "OK") {
+				this.location.name = data.results[1].address_components[0].long_name;
+			}
+			else {
+				this.location.name = 'Erreur';
+			}
+		});
 		console.log(this.geocoder);
 	}
 
