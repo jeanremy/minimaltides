@@ -6,8 +6,11 @@
   </ion-item>
 
   <div class="day">
-    <h1>Today is {{time.getDay() + time.getDate()}}</h1>
-    <strong>{{time.getMonth()}}</strong>
+    <h1>{{ getDayName() }} {{ time.getDate() }}</h1>
+    <strong>{{ getMonthName() }}</strong>
   </div>
 
+	<div class="extremes">
+		
+	</div>
 </ion-content>
