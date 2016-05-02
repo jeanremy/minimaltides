@@ -62,6 +62,8 @@ export class HomePage {
 		let index = 0;
 		let length = this.tides.extremes.length;
 
+		// Boucle à refaire pour parcourir le tableau, et prendre la valeur la plus proche.
+
 		for(var i = 0; i < length; i++) {
 			console.log(now, this.tides.extremes[i].date);
 
