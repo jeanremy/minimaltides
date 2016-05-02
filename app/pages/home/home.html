@@ -10,7 +10,12 @@
     <strong>{{ getMonthName() }}</strong>
   </div>
 
-	<div class="extremes">
-		
-	</div>
+	<ion-card *ngFor="#extreme of extremes">
+        <ion-card-header>
+            {{ extreme.type }} tide
+        </ion-card-header>
+        <ion-card-content>
+            {{ extreme.hour }} 
+        </ion-card-content>
+    </ion-card>
 </ion-content>

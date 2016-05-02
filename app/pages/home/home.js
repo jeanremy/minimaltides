@@ -3,27 +3,27 @@ import {Page} from 'ionic-angular';
 import {Http} from 'angular2/http';
 import {Geolocation} from 'ionic-native';
 import {TidesService} from '../../providers/tides-service/tides-service';
+import {Geocoder} from '../../providers/geocoder/geocoder';
 
 
 @Page({
   templateUrl: 'build/pages/home/home.html',
-  providers: [TidesService]
+  providers: [TidesService, Geocoder]
 })
 export class HomePage {
 
 	static get parameters() {
-		return [[Http], [TidesService]];
+		return [[Http], [TidesService], [Geocoder]];
 	}
 
-	constructor(http, tidesService) {
+	constructor(http, tidesService, geocoder) {
 		this.http 			= http;
 		this.tidesService 	= tidesService;
+		this.geocoder 		= geocoder;
 		this.time 			= new Date();
 		this.location 		= {name: "Waiting for position..."};
 		this.extremes 		= [];
 		let locationOptions = {timeout: 10000, enableHighAccuracy: true};
-
-		
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
@@ -32,8 +32,6 @@ export class HomePage {
 					lng: position.coords.longitude
 				}
 	        	this.getTides(position.coords.latitude, position.coords.longitude, this.time);
-                //this.getLocationName(this.location);
-
 			},
 
 			(error) => {
@@ -52,8 +50,7 @@ export class HomePage {
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
             },
-            err => console.error(err),
-            () => console.log(this.tides)
+            err => console.error(err)
         );
 	}
 
@@ -65,30 +62,33 @@ export class HomePage {
 		// Boucle à refaire pour parcourir le tableau, et prendre la valeur la plus proche.
 
 		for(var i = 0; i < length; i++) {
-			console.log(now, this.tides.extremes[i].date);
 
-			if(now < this.tides.extremes[i].dt) {
-				this.extremes[0] = this.tides.extremes[i];
+			if(now > this.tides.extremes[i].dt) {
+				var day 	= new Date(this.tides.extremes[i].date),
+					hour 	= day.getUTCHours(),
+					min 	= day.getUTCMinutes();
+				this.extremes[0] = {
+					type: this.tides.extremes[i].type,
+					hour: hour+':'+min
+				};
 				index = i;
 			}
 		}
 
 		if(typeof this.tides.extremes[index + 1] != 'undefined') {
-			this.extremes[1] = this.tides.extremes[index+1];
+			var day 	= new Date(this.tides.extremes[index + 1].date),
+				hour 	= day.getUTCHours(),
+				min 	= day.getUTCMinutes();
+			this.extremes[1] = {
+				type: this.tides.extremes[index + 1].type,
+				hour: hour+':'+min
+			};
 		}
-		console.log(this.extremes);
 	}
 
 	getLocationName(lat, lng) {
-
-		var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng;
-		this.http.get(url).map(res => res.json()).subscribe(data => {
-
-			if(data.status === "OK") {
-				this.location.name = data.results[1].address_components[0].long_name;
-			}
-		});
-		// call googleapi for cityname with latlng
+		this.location.name = this.geocoder.getLocationName(lat, lng);
+		console.log(this.geocoder);
 	}
 
 	getDayName() {
