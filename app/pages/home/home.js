@@ -6,6 +6,7 @@ import {TidesService} from '../../providers/tides-service/tides-service';
 import {Geocoder} from '../../providers/geocoder/geocoder';
 
 
+
 @Page({
   templateUrl: 'build/pages/home/home.html',
   providers: [TidesService, Geocoder]
@@ -17,12 +18,14 @@ export class HomePage {
 	}
 
 	constructor(http, tidesService, geocoder) {
+		
 		this.http 			= http;
 		this.tidesService 	= tidesService;
 		this.geocoder 		= geocoder;
+
 		this.time 			= new Date();
 		this.location 		= {name: "Waiting for position..."};
-		this.extremes 		= [];
+		this.extremes 		= {Low: [], High: []};
 		let locationOptions = {timeout: 10000, enableHighAccuracy: true};
 
 		navigator.geolocation.getCurrentPosition(
@@ -43,6 +46,7 @@ export class HomePage {
 
 
 	getTides(lat, lng, date) {
+		console.log(lat, lng);
 		this.tidesService.getTides(lat, lng, date).subscribe(
             data => {
                 this.tides = JSON.parse(data._body);
@@ -63,27 +67,17 @@ export class HomePage {
 
 		for(var i = 0; i < length; i++) {
 
-			if(now > this.tides.extremes[i].dt) {
-				var day 	= new Date(this.tides.extremes[i].date),
-					hour 	= day.getHours(),
-					min 	= day.getMinutes();
-				this.extremes[0] = {
-					type: this.tides.extremes[i].type,
-					hour: hour+':'+min
-				};
-				index = i;
-			}
+			var day 	= new Date(this.tides.extremes[i].date),
+				hour 	= ("0" + day.getUTCHours()).slice(-2),
+				min 	= ("0" + day.getUTCMinutes()).slice(-2);
+			console.log(day);
+			this.extremes[this.tides.extremes[i].type].push({
+				type: this.tides.extremes[i].type,
+				hour: hour+':'+min
+			});
+			index = i;
 		}
 
-		if(typeof this.tides.extremes[index + 1] != 'undefined') {
-			var day 	= new Date(this.tides.extremes[index + 1].date),
-				hour 	= day.getUTCHours(),
-				min 	= day.getUTCMinutes();
-			this.extremes[1] = {
-				type: this.tides.extremes[index + 1].type,
-				hour: hour+':'+min
-			};
-		}
 	}
 
 	getLocationName(lat, lng) {
