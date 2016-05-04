@@ -25,7 +25,7 @@ export class HomePage {
 
 		this.time 			= new Date();
 		this.location 		= {name: "Waiting for position..."};
-		this.extremes 		= {Low: [], High: []};
+		
 		let locationOptions = {timeout: 10000, enableHighAccuracy: true};
 
 		navigator.geolocation.getCurrentPosition(
@@ -44,13 +44,21 @@ export class HomePage {
 	    );
 	}
 
+	getPrevDay() {
+		this.time.setDate(this.time.getDate() - 1);
+		this.getTides(this.location.lat, this.location.lng);
+	}
 
-	getTides(lat, lng, date) {
-		console.log(lat, lng);
-		this.tidesService.getTides(lat, lng, date).subscribe(
+	getNextDay() {
+		this.time.setDate(this.time.getDate() + 1);
+		this.getTides(this.location.lat, this.location.lng);
+	}
+
+
+	getTides(lat, lng) {
+		this.tidesService.getTides(lat, lng, this.time).subscribe(
             data => {
                 this.tides = JSON.parse(data._body);
-                console.log(this.tides.extremes.length);
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
             },
@@ -62,15 +70,16 @@ export class HomePage {
 		let now = Math.round(this.time.getTime() / 1000);
 		let index = 0;
 		let length = this.tides.extremes.length;
+		this.extremes = {Low: [], High: []};
 
 		// Boucle à refaire pour parcourir le tableau, et prendre la valeur la plus proche.
 
 		for(var i = 0; i < length; i++) {
 
 			var day 	= new Date(this.tides.extremes[i].date),
-				hour 	= ("0" + day.getUTCHours()).slice(-2),
-				min 	= ("0" + day.getUTCMinutes()).slice(-2);
-			console.log(day);
+				hour 	= ("0" + day.getHours()).slice(-2),
+				min 	= ("0" + day.getMinutes()).slice(-2);
+
 			this.extremes[this.tides.extremes[i].type].push({
 				type: this.tides.extremes[i].type,
 				hour: hour+':'+min

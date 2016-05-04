@@ -8,9 +8,16 @@
   <div class="day">
     <h1>{{ getDayName() }} {{ time.getDate() }}</h1>
     <strong>{{ getMonthName() }}</strong>
+
+    <div class="controls">
+      
+      <span class="prev" (click)="getPrevDay()">Prev</span>
+      <span class="next" (click)="getNextDay()">Next</span>
+
+    </div>
   </div>
 
-  <div class="extremes">
+  <div *ngIf="tides" class="extremes">
     <div class="extreme">
       <h3 class="extreme__title">
         High Tides
@@ -32,6 +39,10 @@
           
       </p>
 
+    </div>
+
+    <div class="tideviz">
+      des courbes
     </div>
   </div>
     
