@@ -5,6 +5,13 @@ import {Geolocation} from 'ionic-native';
 import {TidesService} from '../../providers/tides-service/tides-service';
 import {Geocoder} from '../../providers/geocoder/geocoder';
 
+/*
+ * Todo: 
+ * -Faire canvas
+ * -Anims canvas
+ * -mettre un loader apres changements de dates et lieux
+ * -Maps autocomplete
+ */
 
 
 @Page({
