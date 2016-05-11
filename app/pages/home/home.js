@@ -7,7 +7,6 @@ import {Geocoder} from '../../providers/geocoder/geocoder';
 
 /*
  * Todo: 
- * -Faire canvas
  * -Anims canvas
  * -mettre un loader apres changements de dates et lieux
  * -Maps autocomplete
@@ -29,6 +28,7 @@ export class HomePage {
 		this.http 			= http;
 		this.tidesService 	= tidesService;
 		this.geocoder 		= geocoder;
+		this.canvas 		= document.getElementById('canvas');
 
 		this.time 			= new Date();
 		this.location 		= {name: "Waiting for position..."};
@@ -52,12 +52,12 @@ export class HomePage {
 	}
 
 	getPrevDay() {
-		this.time.setDate(this.time.getDate() - 1);
+		this.time = new Date(this.time.setDate(this.time.getDate() - 1));
 		this.getTides(this.location.lat, this.location.lng);
 	}
 
 	getNextDay() {
-		this.time.setDate(this.time.getDate() + 1);
+		this.time = new Date(this.time.setDate(this.time.getDate() + 1));
 		this.getTides(this.location.lat, this.location.lng);
 	}
 
@@ -68,6 +68,7 @@ export class HomePage {
                 this.tides = JSON.parse(data._body);
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
+                this.drawCanvas();
             },
             err => console.error(err)
         );
@@ -109,15 +110,41 @@ export class HomePage {
 		console.log(this.geocoder);
 	}
 
-	getDayName() {
-		let dayNames = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
-		return dayNames[this.time.getDay()];
-	}
+	drawCanvas() {
+		this.canvas = document.getElementById('canvas');
+		var ctx 			= this.canvas.getContext('2d'),
+			canvasWidth 	= this.canvas.width,
+			canvasHeight 	= this.canvas.height,
+			segments 		= new Array();
 
-	getMonthName() {
-		let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
-		return monthNames[this.time.getMonth()];
-	}
+		for(var i = 0, j = this.tides.heights.length; i < j; i++) {
+			if(i !== 0) {
+		    	segments.push({start:this.tides.heights[i-1].height, end: this.tides.heights[i].height})
+		  	}
+		}
 
+
+		// Dessin du canvas
+		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+		ctx.beginPath();
+		ctx.moveTo(this.canvas.width, 50);
+		ctx.lineTo(this.canvas.width, this.canvas.height);
+		ctx.lineTo(0, this.canvas.height);
+		ctx.lineTo(0, 50);
+
+
+		for(var i = 0, j = segments.length; i < j; i++) {
+		    var step = Math.round((this.canvas.width / segments.length)),
+		      sx = i * step,
+		      sy = 50 + (segments[i].start * 10),
+		      ex = (i + 1) *step,
+		      ey = 50 + (segments[i].end * 10);
+
+		  	ctx.quadraticCurveTo(sx, sy, ex, ey);
+		}
+
+		ctx.fillStyle = 'navy';
+		ctx.fill();
+	}
 
 }

@@ -6,8 +6,9 @@
   </ion-item>
 
   <div class="day">
-    <h1>{{ getDayName() }} {{ time.getDate() }}</h1>
-    <strong>{{ getMonthName() }}</strong>
+
+    <h1>{{ time | date:'EEEE' }} {{ time | date:'d' }}</h1>
+    <strong>{{ time | date:'MMMM' }}</strong>
 
     <div class="controls">
       
@@ -15,13 +16,17 @@
       <span class="next" (click)="getNextDay()">Next</span>
 
     </div>
+
   </div>
 
   <div *ngIf="tides" class="extremes">
+
     <div class="extreme">
+
       <h3 class="extreme__title">
         High Tides
       </h3>
+
       <p *ngFor="#extreme of extremes.High">
 
           <span>{{ extreme.hour }}</span>
@@ -29,10 +34,13 @@
       </p>
 
     </div>
+
     <div class="extreme">
+
       <h3 class="extreme__title">
         Low Tides
       </h3>
+
       <p *ngFor="#extreme of extremes.Low">
 
           <span>{{ extreme.hour }}</span>
@@ -41,11 +49,8 @@
 
     </div>
 
-    <div class="tideviz">
-      des courbes
-    </div>
   </div>
-    
 
+  <canvas id="canvas"></canvas>
     
 </ion-content>
