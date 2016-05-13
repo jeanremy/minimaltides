@@ -1,0 +1,459 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files (x86)\\nodejs\\node.exe',
+1 verbose cli   'C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   '-g',
+1 verbose cli   'typescript' ]
+2 info using npm@3.3.3
+3 info using node@v4.1.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readGlobalPackageData
+7 silly fetchPackageMetaData typescript
+8 silly fetchNamedPackageData typescript
+9 silly mapToRegistry name typescript
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry uri https://registry.npmjs.org/typescript
+13 verbose request uri https://registry.npmjs.org/typescript
+14 verbose request no auth needed
+15 info attempt registry request try #1 at 09:39:29
+16 verbose request id ec2a68b916b9b3a7
+17 http request GET https://registry.npmjs.org/typescript
+18 http 200 https://registry.npmjs.org/typescript
+19 silly get cb [ 200,
+19 silly get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+19 silly get     etag: '"D2G5ZX7A9H6CNLRFX86K3TOZ0"',
+19 silly get     'content-type': 'application/json',
+19 silly get     'cache-control': 'max-age=300',
+19 silly get     'content-length': '537518',
+19 silly get     'accept-ranges': 'bytes',
+19 silly get     date: 'Fri, 13 May 2016 07:39:19 GMT',
+19 silly get     via: '1.1 varnish',
+19 silly get     age: '292',
+19 silly get     connection: 'keep-alive',
+19 silly get     'x-served-by': 'cache-fra1244-FRA',
+19 silly get     'x-cache': 'HIT',
+19 silly get     'x-cache-hits': '4',
+19 silly get     'x-timer': 'S1463125159.027443,VS0,VE0',
+19 silly get     vary: 'Accept-Encoding' } ]
+20 verbose get saving typescript to C:\Users\JR\AppData\Roaming\npm-cache\registry.npmjs.org\typescript\.cache.json
+21 silly install normalizeTree
+22 silly loadCurrentTree Finishing
+23 silly loadIdealTree Starting
+24 silly install loadIdealTree
+25 silly cloneCurrentTree Starting
+26 silly install cloneCurrentTreeToIdealTree
+27 silly cloneCurrentTree Finishing
+28 silly loadShrinkwrap Starting
+29 silly install loadShrinkwrap
+30 silly loadShrinkwrap Finishing
+31 silly loadAllDepsIntoIdealTree Starting
+32 silly install loadAllDepsIntoIdealTree
+33 silly resolveWithNewModule typescript@1.8.10 checking installable status
+34 silly cache add args [ 'typescript', null ]
+35 verbose cache add spec typescript
+36 silly cache add parsed spec Result {
+36 silly cache add   raw: 'typescript',
+36 silly cache add   scope: null,
+36 silly cache add   name: 'typescript',
+36 silly cache add   rawSpec: '',
+36 silly cache add   spec: '*',
+36 silly cache add   type: 'range' }
+37 silly addNamed typescript@*
+38 verbose addNamed "*" is a valid semver range for typescript
+39 silly addNameRange { name: 'typescript', range: '*', hasData: false }
+40 silly mapToRegistry name typescript
+41 silly mapToRegistry using default registry
+42 silly mapToRegistry registry https://registry.npmjs.org/
+43 silly mapToRegistry uri https://registry.npmjs.org/typescript
+44 verbose addNameRange registry:https://registry.npmjs.org/typescript not in flight; fetching
+45 verbose get https://registry.npmjs.org/typescript not expired, no request
+46 silly addNameRange number 2 { name: 'typescript', range: '*', hasData: true }
+47 silly addNameRange versions [ 'typescript',
+47 silly addNameRange   [ '0.8.0',
+47 silly addNameRange     '0.8.1',
+47 silly addNameRange     '0.8.1-1',
+47 silly addNameRange     '0.8.2',
+47 silly addNameRange     '0.8.3',
+47 silly addNameRange     '0.9.0',
+47 silly addNameRange     '0.9.0-1',
+47 silly addNameRange     '0.9.1',
+47 silly addNameRange     '0.9.1-1',
+47 silly addNameRange     '0.9.5',
+47 silly addNameRange     '0.9.7',
+47 silly addNameRange     '1.0.0',
+47 silly addNameRange     '1.0.1',
+47 silly addNameRange     '1.1.0-1',
+47 silly addNameRange     '1.3.0',
+47 silly addNameRange     '1.4.1',
+47 silly addNameRange     '1.5.0-alpha',
+47 silly addNameRange     '1.5.0-beta',
+47 silly addNameRange     '1.5.3',
+47 silly addNameRange     '1.6.0-dev.20150722.1',
+47 silly addNameRange     '1.6.0-dev.20150723',
+47 silly addNameRange     '1.6.0-dev.20150724',
+47 silly addNameRange     '1.6.0-dev.20150725',
+47 silly addNameRange     '1.6.0-dev.20150726',
+47 silly addNameRange     '1.6.0-dev.20150727',
+47 silly addNameRange     '1.6.0-dev.20150728',
+47 silly addNameRange     '1.6.0-dev.20150729',
+47 silly addNameRange     '1.6.0-dev.20150730',
+47 silly addNameRange     '1.6.0-dev.20150731',
+47 silly addNameRange     '1.6.0-dev.20150801',
+47 silly addNameRange     '1.6.0-dev.20150802',
+47 silly addNameRange     '1.6.0-dev.20150803',
+47 silly addNameRange     '1.6.0-dev.20150804',
+47 silly addNameRange     '1.6.0-dev.20150805',
+47 silly addNameRange     '1.6.0-dev.20150806',
+47 silly addNameRange     '1.6.0-dev.20150807',
+47 silly addNameRange     '1.6.0-dev.20150808',
+47 silly addNameRange     '1.6.0-dev.20150809',
+47 silly addNameRange     '1.6.0-dev.20150810',
+47 silly addNameRange     '1.6.0-dev.20150811',
+47 silly addNameRange     '1.6.0-dev.20150812',
+47 silly addNameRange     '1.6.0-dev.20150813',
+47 silly addNameRange     '1.6.0-dev.20150814',
+47 silly addNameRange     '1.6.0-dev.20150815',
+47 silly addNameRange     '1.6.0-dev.20150816',
+47 silly addNameRange     '1.6.0-dev.20150817',
+47 silly addNameRange     '1.6.0-dev.20150818',
+47 silly addNameRange     '1.6.0-dev.20150819',
+47 silly addNameRange     '1.6.0-dev.20150820',
+47 silly addNameRange     '1.6.0-dev.20150821',
+47 silly addNameRange     '1.6.0-dev.20150822',
+47 silly addNameRange     '1.6.0-dev.20150823',
+47 silly addNameRange     '1.6.0-dev.20150824',
+47 silly addNameRange     '1.6.0-dev.20150825',
+47 silly addNameRange     '1.7.0-dev.20150826',
+47 silly addNameRange     '1.7.0-dev.20150827',
+47 silly addNameRange     '1.7.0-dev.20150828',
+47 silly addNameRange     '1.7.0-dev.20150829',
+47 silly addNameRange     '1.7.0-dev.20150830',
+47 silly addNameRange     '1.7.0-dev.20150831',
+47 silly addNameRange     '1.7.0-dev.20150901',
+47 silly addNameRange     '1.7.0-dev.20150902',
+47 silly addNameRange     '1.6.0-beta',
+47 silly addNameRange     '1.7.0-dev.20150903',
+47 silly addNameRange     '1.7.0-dev.20150904',
+47 silly addNameRange     '1.6.0-dev.20150905',
+47 silly addNameRange     '1.6.0-dev.20150906',
+47 silly addNameRange     '1.6.0-dev.20150907',
+47 silly addNameRange     '1.6.0-dev.20150908',
+47 silly addNameRange     '1.6.0-dev.20150909',
+47 silly addNameRange     '1.6.0-dev.20150910',
+47 silly addNameRange     '1.6.0-dev.20150911',
+47 silly addNameRange     '1.6.0-dev.20150912',
+47 silly addNameRange     '1.6.0-dev.20150913',
+47 silly addNameRange     '1.6.0-dev.20150914',
+47 silly addNameRange     '1.6.0-dev.20150915',
+47 silly addNameRange     '1.7.0-dev.20150916',
+47 silly addNameRange     '1.6.2',
+47 silly addNameRange     '1.7.0-dev.20150917',
+47 silly addNameRange     '1.7.0-dev.20150918',
+47 silly addNameRange     '1.7.0-dev.20150919',
+47 silly addNameRange     '1.7.0-dev.20150920',
+47 silly addNameRange     '1.7.0-dev.20150921',
+47 silly addNameRange     '1.7.0-dev.20150922',
+47 silly addNameRange     '1.7.0-dev.20150923',
+47 silly addNameRange     '1.7.0-dev.20150924',
+47 silly addNameRange     '1.7.0-dev.20150925',
+47 silly addNameRange     '1.7.0-dev.20150926',
+47 silly addNameRange     '1.7.0-dev.20150927',
+47 silly addNameRange     '1.7.0-dev.20150928',
+47 silly addNameRange     '1.7.0-dev.20150929',
+47 silly addNameRange     '1.7.0-dev.20150930',
+47 silly addNameRange     '1.7.0-dev.20151001',
+47 silly addNameRange     '1.7.0-dev.20151002',
+47 silly addNameRange     '1.7.0-dev.20151003',
+47 silly addNameRange     '1.7.0-dev.20151004',
+47 silly addNameRange     '1.7.0-dev.20151005',
+47 silly addNameRange     '1.7.0-dev.20151006',
+47 silly addNameRange     '1.7.0-dev.20151014',
+47 silly addNameRange     '1.7.0-dev.20151015',
+47 silly addNameRange     '1.7.0-dev.20151016',
+47 silly addNameRange     '1.8.0-dev.20151017',
+47 silly addNameRange     '1.8.0-dev.20151018',
+47 silly addNameRange     '1.8.0-dev.20151019',
+47 silly addNameRange     '1.8.0-dev.20151020',
+47 silly addNameRange     '1.8.0-dev.20151021',
+47 silly addNameRange     '1.8.0-dev.20151022',
+47 silly addNameRange     '1.8.0-dev.20151023',
+47 silly addNameRange     '1.8.0-dev.20151024',
+47 silly addNameRange     '1.8.0-dev.20151025',
+47 silly addNameRange     '1.8.0-dev.20151026',
+47 silly addNameRange     '1.8.0-dev.20151027',
+47 silly addNameRange     '1.8.0-dev.20151028',
+47 silly addNameRange     '1.8.0-dev.20151029',
+47 silly addNameRange     '1.8.0-dev.20151030',
+47 silly addNameRange     '1.8.0-dev.20151031',
+47 silly addNameRange     '1.8.0-dev.20151101',
+47 silly addNameRange     '1.8.0-dev.20151102',
+47 silly addNameRange     '1.8.0-dev.20151103',
+47 silly addNameRange     '1.8.0-dev.20151104',
+47 silly addNameRange     '1.8.0-dev.20151105',
+47 silly addNameRange     '1.8.0-dev.20151106',
+47 silly addNameRange     '1.8.0-dev.20151107',
+47 silly addNameRange     '1.8.0-dev.20151108',
+47 silly addNameRange     '1.8.0-dev.20151109',
+47 silly addNameRange     '1.8.0-dev.20151110',
+47 silly addNameRange     '1.8.0-dev.20151111',
+47 silly addNameRange     '1.8.0-dev.20151112',
+47 silly addNameRange     '1.8.0-dev.20151113',
+47 silly addNameRange     '1.8.0-dev.20151114',
+47 silly addNameRange     '1.8.0-dev.20151115',
+47 silly addNameRange     '1.8.0-dev.20151116',
+47 silly addNameRange     '1.8.0-dev.20151117',
+47 silly addNameRange     '1.8.0-dev.20151118',
+47 silly addNameRange     '1.8.0-dev.20151119',
+47 silly addNameRange     '1.8.0-dev.20151120',
+47 silly addNameRange     '1.8.0-dev.20151121',
+47 silly addNameRange     '1.8.0-dev.20151122',
+47 silly addNameRange     '1.8.0-dev.20151123',
+47 silly addNameRange     '1.8.0-dev.20151124',
+47 silly addNameRange     '1.8.0-dev.20151125',
+47 silly addNameRange     '1.8.0-dev.20151126',
+47 silly addNameRange     '1.8.0-dev.20151127',
+47 silly addNameRange     '1.8.0-dev.20151128',
+47 silly addNameRange     '1.8.0-dev.20151129',
+47 silly addNameRange     '1.8.0-dev.20151130',
+47 silly addNameRange     '1.7.3',
+47 silly addNameRange     '1.8.0-dev.20151201',
+47 silly addNameRange     '1.8.0-dev.20151202',
+47 silly addNameRange     '1.8.0-dev.20151203',
+47 silly addNameRange     '1.8.0-dev.20151204',
+47 silly addNameRange     '1.8.0-dev.20151210',
+47 silly addNameRange     '1.8.0-dev.20151211',
+47 silly addNameRange     '1.8.0-dev.20151212',
+47 silly addNameRange     '1.8.0-dev.20151213',
+47 silly addNameRange     '1.8.0-dev.20151214',
+47 silly addNameRange     '1.7.5',
+47 silly addNameRange     '1.8.0-dev.20151215',
+47 silly addNameRange     '1.8.0-dev.20151216',
+47 silly addNameRange     '1.8.0-dev.20151217',
+47 silly addNameRange     '1.8.0-dev.20151218',
+47 silly addNameRange     '1.8.0-dev.20151219',
+47 silly addNameRange     '1.8.0-dev.20151220',
+47 silly addNameRange     '1.8.0-dev.20151221',
+47 silly addNameRange     '1.8.0-dev.20151222',
+47 silly addNameRange     '1.8.0-dev.20151223',
+47 silly addNameRange     '1.8.0-dev.20151224',
+47 silly addNameRange     '1.8.0-dev.20151225',
+47 silly addNameRange     '1.8.0-dev.20151226',
+47 silly addNameRange     '1.8.0-dev.20151227',
+47 silly addNameRange     '1.8.0-dev.20151228',
+47 silly addNameRange     '1.8.0-dev.20151229',
+47 silly addNameRange     '1.8.0-dev.20151230',
+47 silly addNameRange     '1.8.0-dev.20151231',
+47 silly addNameRange     '1.8.0-dev.20160101',
+47 silly addNameRange     '1.8.0-dev.20160102',
+47 silly addNameRange     '1.8.0-dev.20160103',
+47 silly addNameRange     '1.8.0-dev.20160104',
+47 silly addNameRange     '1.8.0-dev.20160105',
+47 silly addNameRange     '1.8.0-dev.20160106',
+47 silly addNameRange     '1.8.0-dev.20160107',
+47 silly addNameRange     '1.8.0-dev.20160108',
+47 silly addNameRange     '1.8.0-dev.20160109',
+47 silly addNameRange     '1.8.0-dev.20160110',
+47 silly addNameRange     '1.8.0-dev.20160111',
+47 silly addNameRange     '1.8.0-dev.20160112',
+47 silly addNameRange     '1.8.0-dev.20160113',
+47 silly addNameRange     '1.8.0-dev.20160114',
+47 silly addNameRange     '1.8.0-dev.20160115',
+47 silly addNameRange     '1.8.0-dev.20160116',
+47 silly addNameRange     '1.8.0-dev.20160117',
+47 silly addNameRange     '1.8.0-dev.20160118',
+47 silly addNameRange     '1.8.0-dev.20160119',
+47 silly addNameRange     '1.8.0-dev.20160120',
+47 silly addNameRange     '1.8.0-dev.20160121',
+47 silly addNameRange     '1.8.0-dev.20160122',
+47 silly addNameRange     '1.8.0-dev.20160123',
+47 silly addNameRange     '1.8.0-dev.20160124',
+47 silly addNameRange     '1.8.0-dev.20160125',
+47 silly addNameRange     '1.9.0-dev.20160126',
+47 silly addNameRange     '1.9.0-dev.20160127',
+47 silly addNameRange     '1.9.0-dev.20160128',
+47 silly addNameRange     '1.8.0',
+47 silly addNameRange     '1.9.0-dev.20160129',
+47 silly addNameRange     '1.9.0-dev.20160130',
+47 silly addNameRange     '1.9.0-dev.20160131',
+47 silly addNameRange     '1.9.0-dev.20160201',
+47 silly addNameRange     '1.9.0-dev.20160202',
+47 silly addNameRange     '1.9.0-dev.20160203',
+47 silly addNameRange     '1.9.0-dev.20160204',
+47 silly addNameRange     '1.9.0-dev.20160205',
+47 silly addNameRange     '1.9.0-dev.20160206',
+47 silly addNameRange     '1.9.0-dev.20160207',
+47 silly addNameRange     '1.9.0-dev.20160208',
+47 silly addNameRange     '1.9.0-dev.20160209',
+47 silly addNameRange     '1.9.0-dev.20160210',
+47 silly addNameRange     '1.9.0-dev.20160211',
+47 silly addNameRange     '1.9.0-dev.20160212',
+47 silly addNameRange     '1.9.0-dev.20160213',
+47 silly addNameRange     '1.9.0-dev.20160214',
+47 silly addNameRange     '1.9.0-dev.20160215',
+47 silly addNameRange     '1.9.0-dev.20160216',
+47 silly addNameRange     '1.9.0-dev.20160217',
+47 silly addNameRange     '1.9.0-dev.20160218',
+47 silly addNameRange     '1.9.0-dev.20160219',
+47 silly addNameRange     '1.9.0-dev.20160220',
+47 silly addNameRange     '1.9.0-dev.20160221',
+47 silly addNameRange     '1.9.0-dev.20160222',
+47 silly addNameRange     '1.8.2',
+47 silly addNameRange     '1.9.0-dev.20160223',
+47 silly addNameRange     '1.9.0-dev.20160224',
+47 silly addNameRange     '1.9.0-dev.20160225',
+47 silly addNameRange     '1.9.0-dev.20160226',
+47 silly addNameRange     '1.9.0-dev.20160227',
+47 silly addNameRange     '1.9.0-dev.20160228',
+47 silly addNameRange     '1.9.0-dev.20160229',
+47 silly addNameRange     '1.9.0-dev.20160301',
+47 silly addNameRange     '1.8.5',
+47 silly addNameRange     '1.8.6',
+47 silly addNameRange     '1.8.7',
+47 silly addNameRange     '1.9.0-dev.20160302',
+47 silly addNameRange     '1.9.0-dev.20160302.1',
+47 silly addNameRange     '1.9.0-dev.20160303',
+47 silly addNameRange     '1.9.0-dev.20160304',
+47 silly addNameRange     '1.9.0-dev.20160305',
+47 silly addNameRange     '1.9.0-dev.20160306',
+47 silly addNameRange     '1.9.0-dev.20160307',
+47 silly addNameRange     '1.9.0-dev.20160308',
+47 silly addNameRange     '1.9.0-dev.20160309',
+47 silly addNameRange     '1.9.0-dev.20160310',
+47 silly addNameRange     '1.9.0-dev.20160311',
+47 silly addNameRange     '1.9.0-dev.20160312',
+47 silly addNameRange     '1.9.0-dev.20160313',
+47 silly addNameRange     '1.9.0-dev.20160315',
+47 silly addNameRange     '1.9.0-dev.20160316',
+47 silly addNameRange     '1.8.9',
+47 silly addNameRange     '1.9.0-dev.20160317',
+47 silly addNameRange     '1.9.0-dev.20160318',
+47 silly addNameRange     '1.9.0-dev.20160319',
+47 silly addNameRange     '1.9.0-dev.20160320',
+47 silly addNameRange     '1.9.0-dev.20160321',
+47 silly addNameRange     '1.9.0-dev.20160322',
+47 silly addNameRange     '1.9.0-dev.20160323',
+47 silly addNameRange     '1.9.0-dev.20160324',
+47 silly addNameRange     '1.9.0-dev.20160325',
+47 silly addNameRange     '1.9.0-dev.20160326',
+47 silly addNameRange     '1.9.0-dev.20160327',
+47 silly addNameRange     '1.9.0-dev.20160328',
+47 silly addNameRange     '1.9.0-dev.20160329',
+47 silly addNameRange     '1.9.0-dev.20160330',
+47 silly addNameRange     '1.9.0-dev.20160331',
+47 silly addNameRange     '1.9.0-dev.20160401',
+47 silly addNameRange     '1.9.0-dev.20160402',
+47 silly addNameRange     '1.9.0-dev.20160403',
+47 silly addNameRange     '1.9.0-dev.20160404',
+47 silly addNameRange     '1.9.0-dev.20160405',
+47 silly addNameRange     '1.9.0-dev.20160406',
+47 silly addNameRange     '1.9.0-dev.20160407',
+47 silly addNameRange     '1.9.0-dev.20160408',
+47 silly addNameRange     '1.9.0-dev.20160409',
+47 silly addNameRange     '1.9.0-dev.20160411',
+47 silly addNameRange     '1.9.0-dev.20160412',
+47 silly addNameRange     '1.8.10',
+47 silly addNameRange     '1.9.0-dev.20160413',
+47 silly addNameRange     '1.9.0-dev.20160414',
+47 silly addNameRange     '1.9.0-dev.20160415',
+47 silly addNameRange     '1.9.0-dev.20160416',
+47 silly addNameRange     '1.9.0-dev.20160417',
+47 silly addNameRange     '1.9.0-dev.20160418',
+47 silly addNameRange     '1.9.0-dev.20160419',
+47 silly addNameRange     '1.9.0-dev.20160420',
+47 silly addNameRange     '1.9.0-dev.20160421',
+47 silly addNameRange     '1.9.0-dev.20160422',
+47 silly addNameRange     '1.9.0-dev.20160423',
+47 silly addNameRange     '1.9.0-dev.20160424',
+47 silly addNameRange     '1.9.0-dev.20160425',
+47 silly addNameRange     '1.9.0-dev.20160426',
+47 silly addNameRange     '1.9.0-dev.20160427',
+47 silly addNameRange     '1.9.0-dev.20160428',
+47 silly addNameRange     '1.9.0-dev.20160428-1.0',
+47 silly addNameRange     '1.9.0-dev.20160429',
+47 silly addNameRange     '1.9.0-dev.20160430',
+47 silly addNameRange     '1.9.0-dev.20160501',
+47 silly addNameRange     '1.9.0-dev.20160502',
+47 silly addNameRange     '1.9.0-dev.20160503',
+47 silly addNameRange     '1.9.0-dev.20160504',
+47 silly addNameRange     '1.9.0-dev.20160505',
+47 silly addNameRange     '1.9.0-dev.20160506',
+47 silly addNameRange     '1.9.0-dev.20160507',
+47 silly addNameRange     '1.9.0-dev.20160508',
+47 silly addNameRange     '1.9.0-dev.20160509',
+47 silly addNameRange     '1.9.0-dev.20160510',
+47 silly addNameRange     '1.9.0-dev.20160511',
+47 silly addNameRange     '1.9.0-dev.20160512',
+47 silly addNameRange     '1.9.0-dev.20160513' ] ]
+48 silly addNamed typescript@1.8.10
+49 verbose addNamed "1.8.10" is a plain semver version for typescript
+50 silly mapToRegistry name typescript
+51 silly mapToRegistry using default registry
+52 silly mapToRegistry registry https://registry.npmjs.org/
+53 silly mapToRegistry uri https://registry.npmjs.org/typescript
+54 verbose addRemoteTarball https://registry.npmjs.org/typescript/-/typescript-1.8.10.tgz not in flight; adding
+55 verbose addRemoteTarball [ 'https://registry.npmjs.org/typescript/-/typescript-1.8.10.tgz',
+55 verbose addRemoteTarball   'b475d6e0dff0bf50f296e5ca6ef9fbb5c7320f1e' ]
+56 info retry fetch attempt 1 at 09:39:30
+57 info attempt registry request try #1 at 09:39:30
+58 http fetch GET https://registry.npmjs.org/typescript/-/typescript-1.8.10.tgz
+59 http fetch 200 https://registry.npmjs.org/typescript/-/typescript-1.8.10.tgz
+60 silly fetchAndShaCheck shasum b475d6e0dff0bf50f296e5ca6ef9fbb5c7320f1e
+61 verbose addTmpTarball C:\Users\JR\AppData\Local\Temp\npm-2372-fa8e4e95\registry.npmjs.org\typescript\-\typescript-1.8.10.tgz not in flight; adding
+62 verbose addTmpTarball already have metadata; skipping unpack for typescript@1.8.10
+63 silly cache afterAdd typescript@1.8.10
+64 verbose afterAdd C:\Users\JR\AppData\Roaming\npm-cache\typescript\1.8.10\package\package.json not in flight; writing
+65 verbose afterAdd C:\Users\JR\AppData\Roaming\npm-cache\typescript\1.8.10\package\package.json written
+66 silly loadAllDepsIntoIdealTree Finishing
+67 silly idealTree:prePrune C:\Program Files (x86)\nodejs
+67 silly idealTree:prePrune └── typescript@1.8.10
+68 silly loadIdealTree Finishing
+69 silly currentTree C:\Program Files (x86)\nodejs
+70 silly idealTree C:\Program Files (x86)\nodejs
+70 silly idealTree └── typescript@1.8.10
+71 silly generateActionsToTake Starting
+72 silly install generateActionsToTake
+73 silly generateActionsToTake Finishing
+74 silly diffTrees action count 1
+75 silly diffTrees add typescript@1.8.10
+76 silly decomposeActions action count 8
+77 silly decomposeActions fetch typescript@1.8.10
+78 silly decomposeActions extract typescript@1.8.10
+79 silly decomposeActions preinstall typescript@1.8.10
+80 silly decomposeActions build typescript@1.8.10
+81 silly decomposeActions install typescript@1.8.10
+82 silly decomposeActions postinstall typescript@1.8.10
+83 silly decomposeActions test typescript@1.8.10
+84 silly decomposeActions finalize typescript@1.8.10
+85 silly executeActions Starting
+86 silly install executeActions
+87 silly doSerial global-install 0
+88 silly doParallel fetch 1
+89 verbose lock using C:\Users\JR\AppData\Roaming\npm-cache\_locks\staging-64c461511ddedb71.lock for C:\Program Files (x86)\nodejs\node_modules\.staging
+90 verbose unlock done using C:\Users\JR\AppData\Roaming\npm-cache\_locks\staging-64c461511ddedb71.lock for C:\Program Files (x86)\nodejs\node_modules\.staging
+91 silly rollbackFailedOptional Starting
+92 silly rollbackFailedOptional Finishing
+93 silly runTopLevelLifecycles Starting
+94 silly runTopLevelLifecycles Finishing
+95 silly install printInstalled
+96 verbose stack Error: EPERM: operation not permitted, mkdir 'C:\Program Files (x86)\nodejs\node_modules\.staging'
+96 verbose stack     at Error (native)
+97 verbose cwd C:\Users\JR\Documents\Web\tides\app\minimaltides
+98 error Windows_NT 10.0.10586
+99 error argv "C:\\Program Files (x86)\\nodejs\\node.exe" "C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "-g" "typescript"
+100 error node v4.1.0
+101 error npm  v3.3.3
+102 error path C:\Program Files (x86)\nodejs\node_modules\.staging
+103 error code EPERM
+104 error errno -4048
+105 error syscall mkdir
+106 error Error: EPERM: operation not permitted, mkdir 'C:\Program Files (x86)\nodejs\node_modules\.staging'
+106 error     at Error (native)
+106 error  { [Error: EPERM: operation not permitted, mkdir 'C:\Program Files (x86)\nodejs\node_modules\.staging']
+106 error   errno: -4048,
+106 error   code: 'EPERM',
+106 error   syscall: 'mkdir',
+106 error   path: 'C:\\Program Files (x86)\\nodejs\\node_modules\\.staging' }
+107 error Please try running this command again as root/Administrator.
+108 verbose exit [ -4048, true ]

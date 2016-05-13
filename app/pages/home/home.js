@@ -4,6 +4,7 @@ import {Http} from 'angular2/http';
 import {Geolocation} from 'ionic-native';
 import {TidesService} from '../../providers/tides-service/tides-service';
 import {Geocoder} from '../../providers/geocoder/geocoder';
+import {GooglePlacesAutocomplete} from '../../components/google-places-autocomplete/google-places-autocomplete';
 
 /*
  * Todo: 
@@ -15,6 +16,7 @@ import {Geocoder} from '../../providers/geocoder/geocoder';
 
 @Page({
   templateUrl: 'build/pages/home/home.html',
+  directives: [GooglePlacesAutocomplete],
   providers: [TidesService, Geocoder]
 })
 export class HomePage {

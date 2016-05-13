@@ -5,6 +5,8 @@
     <button block (click)="getTides()">Search</button>
   </ion-item>
 
+  <google-places-autocomplete></google-places-autocomplete>
+
   <div class="day">
 
     <h1>{{ time | date:'EEEE' }} {{ time | date:'d' }}</h1>
