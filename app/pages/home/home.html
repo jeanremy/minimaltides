@@ -1,9 +1,17 @@
 <ion-content class="home">
   
   <ion-item>
+  <i class="icon ion-ios7-search placeholder-icon"></i>
     <ion-input [(ngModel)]="location.name" type="text"></ion-input>
     <button block (click)="getTides()">Search</button>
   </ion-item>
+
+  <ion-searchbar
+    [(ngModel)]="searchQuery"
+    [hideCancelButton]="false"
+    (ionInput)="getTides()"
+    (ionCancel)="getTides()">
+  </ion-searchbar>
 
   <google-places-autocomplete></google-places-autocomplete>
 

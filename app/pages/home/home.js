@@ -31,6 +31,8 @@ export class HomePage {
 		this.tidesService 	= tidesService;
 		this.geocoder 		= geocoder;
 		this.canvas 		= document.getElementById('canvas');
+		this.searchQuery 	= '';
+		this.locations 		= [];
 
 		this.time 			= new Date();
 		this.location 		= {name: "Waiting for position..."};
