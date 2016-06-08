@@ -65,6 +65,43 @@ export class HomePage {
 		this.getTides(this.location.lat, this.location.lng);
 	}
 
+	// About searchQuery
+	getPredictions(searchbar) {
+		let service = new google.maps.places.AutocompleteService();
+		let self = this;
+		
+		if(!searchbar) {return;}
+
+		// en faire un service !!!!!
+
+		let test = service.getQueryPredictions({ input: searchbar.target.value }, function(predictions, status) {
+		    if (status != google.maps.places.PlacesServiceStatus.OK) {
+		      alert(status);
+		      return;
+		    }
+
+			return predictions;
+		  }
+		);
+		console.log(test);
+	}
+
+	setLocation(location) {
+		let geocoder = new google.maps.Geocoder;
+		let self = this;
+
+		this.searchQuery = location.description;
+		this.locations = [];
+
+		geocoder.geocode({'placeId': location.place_id}, function(results, status) {
+			if (status === google.maps.GeocoderStatus.OK) {
+				self.location = results[0];
+			}
+		});
+
+		console.log(this.location);
+	}
+
 
 	getTides(lat, lng) {
 		this.tidesService.getTides(lat, lng, this.time).subscribe(

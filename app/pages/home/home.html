@@ -8,12 +8,17 @@
 
   <ion-searchbar
     [(ngModel)]="searchQuery"
-    [hideCancelButton]="false"
-    (ionInput)="getTides()"
-    (ionCancel)="getTides()">
+    (keyup)="getPredictions($event)"
+    show-cancel="true" 
+    placeholder="Search">
   </ion-searchbar>
+  <ion-list>
 
-  <google-places-autocomplete></google-places-autocomplete>
+    <ion-item *ngFor="#location of locations" (click)="setLocation(location)">
+      {{location.description}}
+    </ion-item>
+
+  </ion-list>
 
   <div class="day">
 
