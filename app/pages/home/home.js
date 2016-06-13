@@ -3,41 +3,31 @@ import {Page} from 'ionic-angular';
 import {Http} from 'angular2/http';
 import {Geolocation} from 'ionic-native';
 import {TidesService} from '../../providers/tides-service/tides-service';
-import {Geocoder} from '../../providers/geocoder/geocoder';
-import {GooglePlacesAutocomplete} from '../../components/google-places-autocomplete/google-places-autocomplete';
+import {GmapService} from '../../providers/gmap-service/gmap-service';
 
-/*
- * Todo: 
- * -Anims canvas
- * -mettre un loader apres changements de dates et lieux
- * -Maps autocomplete
- */
 
 
 @Page({
   templateUrl: 'build/pages/home/home.html',
-  directives: [GooglePlacesAutocomplete],
-  providers: [TidesService, Geocoder]
+  providers: [TidesService, GmapService]
 })
 export class HomePage {
 
 	static get parameters() {
-		return [[Http], [TidesService], [Geocoder]];
+		return [[Http], [TidesService], [GmapService]];
 	}
 
-	constructor(http, tidesService, geocoder) {
+	constructor(http, tidesService, gmapService) {
 		
 		this.http 			= http;
 		this.tidesService 	= tidesService;
-		this.geocoder 		= geocoder;
+		this.gmapService 	= gmapService;
 		this.canvas 		= document.getElementById('canvas');
 		this.searchQuery 	= '';
 		this.locations 		= [];
 
 		this.time 			= new Date();
 		this.location 		= {name: "Waiting for position..."};
-		
-		let locationOptions = {timeout: 10000, enableHighAccuracy: true};
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
@@ -51,7 +41,7 @@ export class HomePage {
 			(error) => {
 				console.log(error);
 			},
-			locationOptions
+			{timeout: 10000, enableHighAccuracy: true}
 	    );
 	}
 
@@ -67,51 +57,29 @@ export class HomePage {
 
 	// About searchQuery
 	getPredictions(searchbar) {
-		let service = new google.maps.places.AutocompleteService();
-		let self = this;
-		
-		if(!searchbar) {return;}
 
-		// en faire un service !!!!!
+		this.gmapService.getPredictions(searchbar.target.value).subscribe(
 
-		let test = service.getQueryPredictions({ input: searchbar.target.value }, function(predictions, status) {
-		    if (status != google.maps.places.PlacesServiceStatus.OK) {
-		      alert(status);
-		      return;
-		    }
-
-			return predictions;
-		  }
-		);
-		console.log(test);
+            data => {
+                this.locations = JSON.parse(data._body);
+        		console.log(this.locations);
+            },
+            err => console.error(err),
+            () => console.log(data)
+        );
 	}
-
-	setLocation(location) {
-		let geocoder = new google.maps.Geocoder;
-		let self = this;
-
-		this.searchQuery = location.description;
-		this.locations = [];
-
-		geocoder.geocode({'placeId': location.place_id}, function(results, status) {
-			if (status === google.maps.GeocoderStatus.OK) {
-				self.location = results[0];
-			}
-		});
-
-		console.log(this.location);
-	}
-
 
 	getTides(lat, lng) {
-		this.tidesService.getTides(lat, lng, this.time).subscribe(
+		this.tidesService.getTides(lat, lng, this.time).map(res => res.json()).subscribe(
             data => {
-                this.tides = JSON.parse(data._body);
+                this.tides = data;
+                console.log(data);
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
                 this.drawCanvas();
             },
             err => console.error(err)
+
         );
 	}
 
@@ -139,8 +107,7 @@ export class HomePage {
 	}
 
 	getLocationName(lat, lng) {
-		this.location.name = this.geocoder.getLocationName(lat, lng).map(res => res.json()).subscribe(data => {
-
+		this.location.name = this.gmapService.getLocationName(lat, lng).map(res => res.json()).subscribe(data => {
 			if(data.status === "OK") {
 				this.location.name = data.results[1].address_components[0].long_name;
 			}
@@ -148,7 +115,6 @@ export class HomePage {
 				this.location.name = 'Erreur';
 			}
 		});
-		console.log(this.geocoder);
 	}
 
 	drawCanvas() {

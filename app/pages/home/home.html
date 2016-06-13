@@ -11,14 +11,14 @@
     (keyup)="getPredictions($event)"
     show-cancel="true" 
     placeholder="Search">
+    <ion-list>
+
+      <ion-item *ngFor="#location of locations" (click)="setLocation(location)">
+        {{location.description}}
+      </ion-item>
+
+    </ion-list>
   </ion-searchbar>
-  <ion-list>
-
-    <ion-item *ngFor="#location of locations" (click)="setLocation(location)">
-      {{location.description}}
-    </ion-item>
-
-  </ion-list>
 
   <div class="day">
 
