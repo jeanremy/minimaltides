@@ -1,16 +1,15 @@
 <ion-content class="home">
-  
-  <ion-item>
-  <i class="icon ion-ios7-search placeholder-icon"></i>
-    <ion-input [(ngModel)]="location.name" type="text"></ion-input>
-    <button block (click)="getTides()">Search</button>
-  </ion-item>
 
-  <ion-searchbar
-    [(ngModel)]="searchQuery"
-    (keyup)="getPredictions($event)"
-    show-cancel="true" 
-    placeholder="Search">
+  <div class="search">
+    
+    <ion-searchbar
+      [(ngModel)]="searchQuery"
+      (keyup)="getPredictions($event)"
+      (ionCancel)="resetQuery"
+      show-cancel="true" 
+      placeholder="Search">
+    </ion-searchbar>
+
     <ion-list>
 
       <ion-item *ngFor="#location of locations" (click)="setLocation(location)">
@@ -18,7 +17,8 @@
       </ion-item>
 
     </ion-list>
-  </ion-searchbar>
+    
+  </div>
 
   <div class="day">
 

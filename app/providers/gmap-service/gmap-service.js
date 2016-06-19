@@ -20,15 +20,21 @@ export class GmapService {
 		this.key = 'AIzaSyDu-QZnDzl-mfuSUVumhUv9wsAIUAQSNsg';
 	}
 
-	getLocationName(lat, lng) {
+	getLocationByCoords(lat, lng) {
 
 		var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng;
 		return this.http.get(url);
 		
 	}
 
+	getLocationById(id) {
+		var url = 'https://maps.googleapis.com/maps/api/geocode/json?key='+this.key+'&place_id='+id;
+		return this.http.get(url);
+	}
+
 	getPredictions(input) {
-		var url = 'https://maps.googleapis.com/maps/api/autocomplete/json?key='+this.key+'&input='+input;
+
+		var url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?key='+this.key+'&input='+input+'&types=(cities)';
 		return this.http.get(url);
 	}
   

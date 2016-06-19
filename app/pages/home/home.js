@@ -23,11 +23,11 @@ export class HomePage {
 		this.tidesService 	= tidesService;
 		this.gmapService 	= gmapService;
 		this.canvas 		= document.getElementById('canvas');
-		this.searchQuery 	= '';
+		this.searchQuery 	= 'Waiting for position...';
+		this.location 		= {};
 		this.locations 		= [];
 
 		this.time 			= new Date();
-		this.location 		= {name: "Waiting for position..."};
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
@@ -57,16 +57,46 @@ export class HomePage {
 
 	// About searchQuery
 	getPredictions(searchbar) {
-
-		this.gmapService.getPredictions(searchbar.target.value).subscribe(
+		this.gmapService.getPredictions(searchbar.target.value).map(res => res.json()).subscribe(
 
             data => {
-                this.locations = JSON.parse(data._body);
+            	if(data.status === "OK") {
+                	this.locations = data.predictions;
+            	}
         		console.log(this.locations);
             },
-            err => console.error(err),
-            () => console.log(data)
+            err => console.error(err)
         );
+	}
+
+	getLocationName(lat, lng) {
+		this.location.name = this.gmapService.getLocationByCoords(lat, lng).map(res => res.json()).subscribe(data => {
+			if(data.status === "OK") {
+				this.location = data.results[1];
+				this.searchQuery = data.results[1].address_components[0].long_name;
+			}
+			else {
+				console.log(data.status);
+			}
+		});
+	}
+
+	resetQuery() {
+		this.searchQuery = this.location.address_components[0].long_name;
+	}
+
+	setLocation(location) {
+		this.gmapService.getLocationById(location.place_id).map(res => res.json()).subscribe( data => {
+			if(data.status === "OK") {
+				this.location = data.results[0];
+				this.searchQuery = this.location.address_components[0].long_name;
+        		this.locations = [];
+	    		this.getTides(this.location.geometry.location.lat, this.location.geometry.location.lng, this.time);
+			}
+			else {
+				console.log(data.status);
+			}
+        });
 	}
 
 	getTides(lat, lng) {
@@ -104,17 +134,6 @@ export class HomePage {
 			index = i;
 		}
 
-	}
-
-	getLocationName(lat, lng) {
-		this.location.name = this.gmapService.getLocationName(lat, lng).map(res => res.json()).subscribe(data => {
-			if(data.status === "OK") {
-				this.location.name = data.results[1].address_components[0].long_name;
-			}
-			else {
-				this.location.name = 'Erreur';
-			}
-		});
 	}
 
 	drawCanvas() {
