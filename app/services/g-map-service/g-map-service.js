@@ -23,15 +23,15 @@ export class GMapService {
 
 	getPredictions(input) {
 		var service = new google.maps.places.AutocompleteService();
-		console.log(service);
-		/*service.getQueryPredictions({ input: input }, function(predictions, status) {
+		//console.log(service);
+		service.getQueryPredictions({ input: input }, function(predictions, status) {
 		    if (status != google.maps.places.PlacesServiceStatus.OK) {
 		      return status;
 		    }
 
 			return predictions;
 		  }
-		);*/
+		);
 	}
   
 }

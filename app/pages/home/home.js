@@ -45,6 +45,7 @@ export class HomePage {
 	    );
 	}
 
+
 	getPrevDay() {
 		this.time = new Date(this.time.setDate(this.time.getDate() - 1));
 		this.getTides(this.location.lat, this.location.lng);
@@ -63,7 +64,6 @@ export class HomePage {
             	if(data.status === "OK") {
                 	this.locations = data.predictions;
             	}
-        		console.log(this.locations);
             },
             err => console.error(err)
         );
@@ -106,7 +106,7 @@ export class HomePage {
                 console.log(data);
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
-                this.drawCanvas();
+                this.drawChart();
             },
             err => console.error(err)
 
@@ -133,6 +133,45 @@ export class HomePage {
 			});
 			index = i;
 		}
+
+	}
+
+	drawChart() {
+		var chart = new google.visualization.AreaChart(document.getElementById('chart'));
+
+
+		var datas = [
+			['Day', 'Heights']
+		];
+
+		for (var i = 0; i < this.tides.heights.length; i++) {
+			datas.push([this.tides.heights[i].date, this.tides.heights[i].height]);
+		}
+
+		var data = google.visualization.arrayToDataTable(datas);
+
+		console.log(datas);
+
+		var options = {
+			animation: {
+				duration: 300
+			},
+			chartArea: {left:0,top:0,width:'100%',height:'100%'},
+			legend: 'none',
+			hAxis: {
+				titleTextStyle: {color: '#333'},
+				gridlines: {count: 0}
+
+			},
+			vAxis: {
+				titleTextStyle: {color: '#333'},
+				gridlines: {count: 0},
+				vAxis: {minValue: -2}
+
+			}
+		};
+
+		chart.draw(data, options);
 
 	}
 
