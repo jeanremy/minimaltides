@@ -31,10 +31,7 @@ export class HomePage {
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
-				this.location = {
-					lat: position.coords.latitude,
-					lng: position.coords.longitude
-				}
+				this.location = {};
 	        	this.getTides(position.coords.latitude, position.coords.longitude, this.time);
 			},
 
@@ -48,12 +45,12 @@ export class HomePage {
 
 	getPrevDay() {
 		this.time = new Date(this.time.setDate(this.time.getDate() - 1));
-		this.getTides(this.location.lat, this.location.lng);
+		this.getTides(this.location.geometry.location.lat, this.location.geometry.location.lng);
 	}
 
 	getNextDay() {
 		this.time = new Date(this.time.setDate(this.time.getDate() + 1));
-		this.getTides(this.location.lat, this.location.lng);
+		this.getTides(this.location.geometry.location.lat, this.location.geometry.location.lng);
 	}
 
 	// About searchQuery
