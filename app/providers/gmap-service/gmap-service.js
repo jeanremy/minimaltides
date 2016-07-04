@@ -22,7 +22,7 @@ export class GmapService {
 
 	getLocationByCoords(lat, lng) {
 
-		var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng;
+		var url = 'https://maps.googleapis.com/maps/api/geocode/json?result_type=locality&latlng='+lat+','+lng+'&key='+this.key;
 		return this.http.get(url);
 		
 	}

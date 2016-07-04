@@ -72,11 +72,12 @@ export class HomePage {
 	getLocationName(lat, lng) {
 		this.location.name = this.gmapService.getLocationByCoords(lat, lng).map(res => res.json()).subscribe(data => {
 			if(data.status === "OK") {
-				this.location = data.results[1];
-				this.searchQuery = data.results[1].address_components[0].long_name;
+				console.log(data.results);
+				this.location = data.results[0];
+				this.searchQuery = data.results[0].address_components[0].long_name;
 			}
 			else {
-				console.log(data.status);
+				//console.log(data.status);
 			}
 		});
 	}
@@ -103,7 +104,7 @@ export class HomePage {
 		this.tidesService.getTides(lat, lng, this.time).map(res => res.json()).subscribe(
             data => {
                 this.tides = data;
-                console.log(data);
+                //console.log(data);
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
                 this.drawChart();
@@ -160,13 +161,15 @@ export class HomePage {
 			legend: 'none',
 			hAxis: {
 				titleTextStyle: {color: '#333'},
-				gridlines: {count: 0}
-
+				gridlines: {count: 0},
+				viewWindowMode: {min: -2}, 
+				minValue: -2
 			},
 			vAxis: {
 				titleTextStyle: {color: '#333'},
 				gridlines: {count: 0},
-				vAxis: {minValue: -2}
+				viewWindowMode: {min: -2}, 
+				minValue: 4
 
 			}
 		};
