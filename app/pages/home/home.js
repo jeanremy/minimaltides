@@ -69,7 +69,7 @@ export class HomePage {
 	getLocationName(lat, lng) {
 		this.location.name = this.gmapService.getLocationByCoords(lat, lng).map(res => res.json()).subscribe(data => {
 			if(data.status === "OK") {
-				console.log(data.results);
+				//console.log(data.results);
 				this.location = data.results[0];
 				this.searchQuery = data.results[0].address_components[0].long_name;
 			}
@@ -101,7 +101,6 @@ export class HomePage {
 		this.tidesService.getTides(lat, lng, this.time).map(res => res.json()).subscribe(
             data => {
                 this.tides = data;
-                //console.log(data);
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
                 this.drawChart();
@@ -135,43 +134,90 @@ export class HomePage {
 	}
 
 	drawChart() {
-		var chart = new google.visualization.AreaChart(document.getElementById('chart'));
+
+		var datas = [];
 
 
-		var datas = [
-			['Day', 'Heights']
-		];
+		// var data = google.visualization.arrayToDataTable(datas);
 
-		for (var i = 0; i < this.tides.heights.length; i++) {
-			datas.push([this.tides.heights[i].date, this.tides.heights[i].height]);
-		}
+		// console.log(datas);
 
-		var data = google.visualization.arrayToDataTable(datas);
+		// var options = {
+		// 	animation: {
+		// 		duration: 300
+		// 	},
+		// 	chartArea: {left:0,top:0,width:'100%',height:'100%'},
+		// 	legend: 'none',
+		// 	hAxis: {
+		// 		titleTextStyle: {color: '#333'},
+		// 		gridlines: {count: 0},
+		// 		viewWindowMode: {min: -2}, 
+		// 		minValue: -2
+		// 	},
+		// 	vAxis: {
+		// 		titleTextStyle: {color: '#333'},
+		// 		gridlines: {count: 0},
+		// 		viewWindowMode: {min: -2}, 
+		// 		minValue: 4
 
-		console.log(datas);
+		// 	}
+		// };
 
-		var options = {
-			animation: {
-				duration: 300
-			},
-			chartArea: {left:0,top:0,width:'100%',height:'100%'},
-			legend: 'none',
-			hAxis: {
-				titleTextStyle: {color: '#333'},
-				gridlines: {count: 0},
-				viewWindowMode: {min: -2}, 
-				minValue: -2
-			},
-			vAxis: {
-				titleTextStyle: {color: '#333'},
-				gridlines: {count: 0},
-				viewWindowMode: {min: -2}, 
-				minValue: 4
+		// chart.draw(data, options);
 
-			}
-		};
+		var chart = document.getElementById('chart');
 
-		chart.draw(data, options);
+		var margin = {top: 0, right: 0, bottom: 30, left: 0},
+		    width = chart.offsetWidth - margin.left - margin.right,
+		    height = chart.offsetHeight - margin.top - margin.bottom;
+
+		    console.log(chart.offsetHeight);
+
+		var parseDate = d3.time.format("%d-%b-%y").parse;
+
+		var x = d3.time.scale()
+		    .range([0, width]);
+
+		var y = d3.scale.linear()
+		    .range([height, 0]);
+
+		var xAxis = d3.svg.axis()
+		    .scale(x)
+		    .orient("bottom");
+
+		var yAxis = d3.svg.axis()
+		    .scale(y)
+		    .orient("left");
+
+		var area = d3.svg.area()
+		    .x(function(d) { return x(d.newDate); })
+		    .y0(height)
+		    .y1(function(d) { return y(d.height); });
+
+		var svg = d3.select("#chart").append("svg")
+		    .attr("width", width + margin.left + margin.right)
+		    .attr("height", height + margin.top + margin.bottom)
+		  .append("g")
+		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+		  this.tides.heights.forEach(function(d) {
+		    d.newDate = new Date(d.dt*1000);
+		  });
+
+		  x.domain(d3.extent(this.tides.heights, function(d) { return d.newDate; }));
+		  y.domain([d3.min(this.tides.heights, function(d) { return d.height; }), d3.max(this.tides.heights, function(d) { return d.height; })]);
+
+		  svg.append("path")
+		      .datum(this.tides.heights)
+		      .attr("class", "area")
+		      .attr("d", area);
+
+		  svg.append("g")
+		      .attr("class", "x axis")
+		      .attr("transform", "translate(0," + height + ")")
+		      .call(xAxis);
 
 	}
 

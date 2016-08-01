@@ -12,7 +12,7 @@
 
     <ion-list>
 
-      <ion-item *ngFor="#location of locations" (click)="setLocation(location)">
+      <ion-item *ngFor="#location of locations" tappable (click)="setLocation(location)">
         {{location.description}}
       </ion-item>
 
@@ -27,8 +27,8 @@
 
     <div class="controls">
       
-      <span class="prev" (click)="getPrevDay()">Prev</span>
-      <span class="next" (click)="getNextDay()">Next</span>
+      <span class="prev" tappable (click)="getPrevDay()">Prev</span>
+      <span class="next" tappable (click)="getNextDay()">Next</span>
 
     </div>
 
@@ -67,5 +67,18 @@
   </div>
 
   <div id="chart"></div>
+
+  <!-- <div id="chart">
+    <svg id="area">
+      <g class="grid x-grid">
+        <line stroke="#000" x1="0" x2="100" y1="100" y2="100"></line>
+      </g>
+      <g>
+        <text x="25" y="100">06h</text>
+        <text x="50" y="100">12h</text>
+        <text x="75" y="100">18h</text>
+      </g>
+    </svg>
+  </div> -->
     
 </ion-content>
