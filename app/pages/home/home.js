@@ -171,7 +171,6 @@ export class HomePage {
 		    width = chart.offsetWidth - margin.left - margin.right,
 		    height = chart.offsetHeight - margin.top - margin.bottom;
 
-		    console.log(chart.offsetHeight);
 
 		var parseDate = d3.time.format("%d-%b-%y").parse;
 
@@ -194,7 +193,7 @@ export class HomePage {
 		    .y0(height)
 		    .y1(function(d) { return y(d.height); });
 
-		var svg = d3.select("#chart").append("svg")
+		var svg = d3.select("#chart").html('').append("svg")
 		    .attr("width", width + margin.left + margin.right)
 		    .attr("height", height + margin.top + margin.bottom)
 		  .append("g")

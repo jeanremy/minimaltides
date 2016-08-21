@@ -1,4 +1,67 @@
+$bluebg: #4b5c84;
+$clearfont: #768ba9;
+$clearchart: #596e90; 
+
+
 .home {
+
+	color: #fff;
+	background: $bluebg;
+
+	.search {
+
+		ion-searchbar {
+			padding: 0 20px;
+			background: none;
+		}
+
+		.searchbar-input-container {
+			border-bottom: 1px solid $clearfont;			
+		}
+
+		.searchbar-input {
+			color: #fff;
+			background: none;
+		}
+
+		.button-clear-dark,
+		.searchbar-clear-icon {color: #fff;}
+	}
+
+	.day {
+		padding: 0 20px;
+		h1 {
+			color: $clearfont;
+		}
+	}
+
+	.extremes {
+		padding: 0 20px;
+
+		&:after {
+			content: "";
+			clear: both;
+			display: table;
+		}
+
+		.extreme {
+
+			float: left;
+
+			&__title {
+				color: $clearfont;
+			}
+
+			p {
+				color: #fff;
+				opacity: .85;
+			}
+
+			& + .extreme {
+				margin-left: 20px;
+			}
+		}
+	}
   
 	#canvas {
 		width: 100%;
@@ -18,6 +81,18 @@
 	}
 
 	.area {
-	  fill: red;
+	  fill: $clearchart;
+	}
+
+	path.domain {
+		stroke: $clearchart;
+	}
+
+	.tick {
+		line {stroke: $bluebg;}
+		text {
+			fill: #fff;
+			opacity: .85;
+		}
 	}
 }
