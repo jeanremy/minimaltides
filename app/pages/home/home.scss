@@ -3,10 +3,58 @@ $clearfont: #768ba9;
 $clearchart: #596e90; 
 
 
+@font-face {
+    font-family: 'montserrathairline';
+    src: url('../../fonts/montserrat-hairline.eot');
+    src: url('../../fonts/montserrat-hairline.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/montserrat-hairline.woff2') format('woff2'),
+         url('../../fonts/montserrat-hairline.woff') format('woff'),
+         url('../../fonts/montserrat-hairline.ttf') format('truetype'),
+         url('../../fonts/montserrat-hairline.svg#montserrathairline') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'montserratlight';
+    src: url('../../fonts/montserrat-light.eot');
+    src: url('../../fonts/montserrat-light.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/montserrat-light.woff2') format('woff2'),
+         url('../../fonts/montserrat-light.woff') format('woff'),
+         url('../../fonts/montserrat-light.ttf') format('truetype'),
+         url('../../fonts/montserrat-light.svg#montserratlight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+
+@font-face {
+    font-family: 'montserratregular';
+    src: url('../../fonts/montserrat-regular.eot');
+    src: url('../../fonts/montserrat-regular.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/montserrat-regular.woff2') format('woff2'),
+         url('../../fonts/montserrat-regular.woff') format('woff'),
+         url('../../fonts/montserrat-regular.ttf') format('truetype'),
+         url('../../fonts/montserrat-regular.svg#montserratregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
 .home {
 
 	color: #fff;
 	background: $bluebg;
+	font-family: 'montserrathairline';
 
 	.search {
 
