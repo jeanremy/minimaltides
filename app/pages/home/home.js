@@ -103,7 +103,7 @@ export class HomePage {
                 this.tides = data;
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
-                this.drawChart();
+                this.drawCanvas();
             },
             err => console.error(err)
 
@@ -225,35 +225,54 @@ export class HomePage {
 		var ctx 			= this.canvas.getContext('2d'),
 			canvasWidth 	= this.canvas.width,
 			canvasHeight 	= this.canvas.height,
+			delta 			= 50, // l'aimplitude de la courbe sur
+			heights 		= new Array(),
 			segments 		= new Array();
 
 		for(var i = 0, j = this.tides.heights.length; i < j; i++) {
 			if(i !== 0) {
-		    	segments.push({start:this.tides.heights[i-1].height, end: this.tides.heights[i].height})
+		    	heights.push(this.tides.heights[i].height);
 		  	}
 		}
 
+		for(var i = 0, j = heights.length; i < j; i++) {
+			if(i !== 0) {
+		    	segments.push({start:heights[i-1], end: (heights[i])})
+		  	}
+		}
 
-		// Dessin du canvas
+		// calcul des max et min
+		var maxHeight = Math.max.apply(null, heights),
+			minHeight = Math.min.apply(null, heights);
+
+
+
+		// Dessin du canvas (rectangle)
 		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 		ctx.beginPath();
 		ctx.moveTo(this.canvas.width, 50);
 		ctx.lineTo(this.canvas.width, this.canvas.height);
 		ctx.lineTo(0, this.canvas.height);
 		ctx.lineTo(0, 50);
+		
+
+		//Petit bug sur le peiremier point, à voir
 
 
+		// Dessin de la courbe
 		for(var i = 0, j = segments.length; i < j; i++) {
 		    var step = Math.round((this.canvas.width / segments.length)),
 		      sx = i * step,
-		      sy = 50 + (segments[i].start * 10),
 		      ex = (i + 1) *step,
-		      ey = 50 + (segments[i].end * 10);
+		      // http://stackoverflow.com/questions/13729396/working-out-a-percentage-from-a-array-of-numbers
+		      sy = (0 + ((segments[i].start - minHeight) / (maxHeight - minHeight)) * (100)),
+		      ey = (0 + ((segments[i].end - minHeight) / (maxHeight - minHeight)) * (100));
 
 		  	ctx.quadraticCurveTo(sx, sy, ex, ey);
+		  	console.log(sx, sy, ex, ey);
 		}
 
-		ctx.fillStyle = 'navy';
+		ctx.fillStyle = '#596e90';
 		ctx.fill();
 	}
 
