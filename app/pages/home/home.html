@@ -22,15 +22,14 @@
 
   <div class="day">
 
-    <h1>{{ time | date:'EEEE' }} {{ time | date:'d' }}</h1>
-    <strong>{{ time | date:'MMMM' }}</strong>
-
     <div class="controls">
       
-      <span class="prev" tappable (click)="getPrevDay()">Prev</span>
-      <span class="next" tappable (click)="getNextDay()">Next</span>
+      <span class="arrow prev" tappable (click)="getPrevDay()">Prev</span>
+      <span class="arrow next" tappable (click)="getNextDay()">Next</span>
 
     </div>
+    
+    <h1>{{ time | date:'EEEE' }} <strong>{{ time | date:'d' }} {{ time | date:'MMMM' }}</strong></h1>
 
   </div>
 

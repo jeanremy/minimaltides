@@ -50,6 +50,20 @@ $clearchart: #596e90;
 
 
 
+@font-face {
+    font-family: 'montserratsemibold';
+    src: url('../../fonts/montserrat-semibold.eot');
+    src: url('../../fonts/montserrat-semibold.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/montserrat-semibold.woff2') format('woff2'),
+         url('../../fonts/montserrat-semibold.woff') format('woff'),
+         url('../../fonts/montserrat-semibold.ttf') format('truetype'),
+         url('../../fonts/montserrat-semibold.svg#montserratregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
 .home {
 
 	color: #fff;
@@ -57,14 +71,18 @@ $clearchart: #596e90;
 	font-family: 'montserrathairline';
 
 	.search {
+		padding: 0 20px;
+		position: relative;
+		margin-bottom: 40px;
 
 		ion-searchbar {
-			padding: 0 20px;
+			padding: 0;
 			background: none;
+			border-bottom: 1px solid $clearfont;	
 		}
 
 		.searchbar-input-container {
-			border-bottom: 1px solid $clearfont;			
+			bos-shadow: none;		
 		}
 
 		.searchbar-input {
@@ -72,14 +90,86 @@ $clearchart: #596e90;
 			background: none;
 		}
 
-		.button-clear-dark,
-		.searchbar-clear-icon {color: #fff;}
+		.searchbar-search-icon {
+			background-image: url("data:image/svg+xml;charset=utf-8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2013%2013'><path%20fill='#ffffff'%20d='M5,1c2.2,0,4,1.8,4,4S7.2,9,5,9S1,7.2,1,5S2.8,1,5,1%20M5,0C2.2,0,0,2.2,0,5s2.2,5,5,5s5-2.2,5-5S7.8,0,5,0%20L5,0z'/><line%20stroke='#ffffff'%20stroke-miterlimit='10'%20x1='12.6'%20y1='12.6'%20x2='8.2'%20y2='8.2'/></svg>");
+		}
+
+		
+		.searchbar-clear-icon {
+			background-image: url("data:image/svg+xml;charset=utf-8,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20512%20512'><path%20fill='#ffffff'%20d='M403.1,108.9c-81.2-81.2-212.9-81.2-294.2,0s-81.2,212.9,0,294.2c81.2,81.2,212.9,81.2,294.2,0S484.3,190.1,403.1,108.9z%20M352,340.2L340.2,352l-84.4-84.2l-84,83.8L160,339.8l84-83.8l-84-83.8l11.8-11.8l84,83.8l84.4-84.2l11.8,11.8L267.6,256L352,340.2z'/></svg>");
+		}
+
+		.searchbar-ios-cancel {color: #fff;}
+
+
+		ion-list {
+			position: absolute;
+			top: 100%;
+			left: 20px;
+			right: 20px;
+			z-index: 100;
+
+			ion-item {
+				background: $clearchart;
+				color: #fff;
+				border-top: none;
+				border-bottom: 1px solid $bluebg;
+
+				.item-inner {
+					border-bottom: none;	
+				}
+			}
+		}
 	}
 
 	.day {
 		padding: 0 20px;
+		
 		h1 {
+			font-size: 40px;
 			color: $clearfont;
+			strong {
+				display: block;
+				font-family: 'montserratlight';
+				color: #fff;
+				opacity: .85;
+			}
+		}
+
+		.controls {
+			float: right;
+
+			.arrow {
+				height: 26px;
+				width: 26px;
+				float: left;
+				margin-left: 15px;
+				text-indent: -9999px;
+				position: relative;
+				cursor: pointer;
+
+				&:before,
+				&:after {
+					content: "";
+					height: 1px;
+					width: 100%;
+					background: $clearfont;
+					display: block;
+					position: absolute;
+					top: 50%;
+					transform-origin: center left;
+					transform: rotate(-45deg);
+				}
+
+				&:after {
+					transform: rotate(45deg);
+				}
+				
+				& + .arrow {
+					transform: rotate(180deg);
+				}
+			}
+
 		}
 	}
 
@@ -98,11 +188,16 @@ $clearchart: #596e90;
 
 			&__title {
 				color: $clearfont;
+				font-family: 'montserratsemibold';
+				font-size: 14px;
+				text-transform: uppercase;
 			}
 
 			p {
 				color: #fff;
 				opacity: .85;
+				font-family: 'montserratregular';
+				font-size: 16px;	
 			}
 
 			& + .extreme {
