@@ -71,23 +71,26 @@ $clearchart: #596e90;
 	font-family: 'montserrathairline';
 
 	.search {
-		padding: 0 20px;
+		padding: 20px 20px 0;
 		position: relative;
 		margin-bottom: 40px;
 
 		ion-searchbar {
 			padding: 0;
-			background: none;
+			background: none;	
 			border-bottom: 1px solid $clearfont;	
 		}
 
 		.searchbar-input-container {
-			bos-shadow: none;		
 		}
 
 		.searchbar-input {
 			color: #fff;
 			background: none;
+			box-shadow: none;
+			-moz-box-shadow: none;
+			-webkit-box-shadow: none;
+			-o-box-shadow: none;
 		}
 
 		.searchbar-search-icon {

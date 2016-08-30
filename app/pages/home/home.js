@@ -1,5 +1,5 @@
 import 'rxjs/add/operator/map';
-import {Page} from 'ionic-angular';
+import {Page, Loading, NavController} from 'ionic-angular';
 import {Http} from 'angular2/http';
 import {Geolocation} from 'ionic-native';
 import {TidesService} from '../../providers/tides-service/tides-service';
@@ -14,33 +14,41 @@ import {GmapService} from '../../providers/gmap-service/gmap-service';
 export class HomePage {
 
 	static get parameters() {
-		return [[Http], [TidesService], [GmapService]];
+		return [[Http], [TidesService], [GmapService], [NavController]];
 	}
 
-	constructor(http, tidesService, gmapService) {
+	constructor(http, tidesService, gmapService, navController) {
 		
 		this.http 			= http;
 		this.tidesService 	= tidesService;
 		this.gmapService 	= gmapService;
 		this.canvas 		= document.getElementById('canvas');
 		this.searchQuery 	= 'Waiting for position...';
-		this.location 		= {};
-		this.locations 		= [];
+		//this.location 		= {};
+		//this.locations 		= [];
+		this.nav 			= navController;
+		this.loading 		= Loading.create();
+
+	    this.nav.present(this.loading);
 
 		this.time 			= new Date();
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
+				this.loading.dismiss();
 				this.location = {};
 	        	this.getTides(position.coords.latitude, position.coords.longitude, this.time);
 			},
 
 			(error) => {
+				this.loading.dismiss();
 				console.log(error);
 			},
-			{timeout: 10000, enableHighAccuracy: true}
+			{timeout: 1000, enableHighAccuracy: true}
 	    );
 	}
+
+
 
 
 	getPrevDay() {
@@ -84,22 +92,32 @@ export class HomePage {
 	}
 
 	setLocation(location) {
+		
+		this.loading = Loading.create();
+	    this.nav.present(this.loading);
+
 		this.gmapService.getLocationById(location.place_id).map(res => res.json()).subscribe( data => {
 			if(data.status === "OK") {
+				this.loading.dismiss();
 				this.location = data.results[0];
 				this.searchQuery = this.location.address_components[0].long_name;
         		this.locations = [];
 	    		this.getTides(this.location.geometry.location.lat, this.location.geometry.location.lng, this.time);
 			}
 			else {
+				this.loading.dismiss();
 				console.log(data.status);
 			}
         });
 	}
 
 	getTides(lat, lng) {
+		this.loading = Loading.create();
+	    this.nav.present(this.loading);
+
 		this.tidesService.getTides(lat, lng, this.time).map(res => res.json()).subscribe(
             data => {
+				this.loading.dismiss();
                 this.tides = data;
                 this.getLocationName(this.tides.responseLat, this.tides.responseLon);
                 this.getExtremeTides();
@@ -225,7 +243,7 @@ export class HomePage {
 		var ctx 			= this.canvas.getContext('2d'),
 			canvasWidth 	= this.canvas.width,
 			canvasHeight 	= this.canvas.height,
-			delta 			= 50, // l'aimplitude de la courbe sur
+			delta 			= 40, // l'aimplitude de la courbe sur
 			heights 		= new Array(),
 			segments 		= new Array();
 
@@ -250,13 +268,10 @@ export class HomePage {
 		// Dessin du canvas (rectangle)
 		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 		ctx.beginPath();
-		ctx.moveTo(this.canvas.width, 50);
+		ctx.moveTo(this.canvas.width, (0 + ((segments[segments.length - 1].end - minHeight) / (maxHeight - minHeight)) * delta));
 		ctx.lineTo(this.canvas.width, this.canvas.height);
 		ctx.lineTo(0, this.canvas.height);
-		ctx.lineTo(0, 50);
-		
-
-		//Petit bug sur le peiremier point, à voir
+		ctx.lineTo(0, (0 + (segments[0].start - minHeight) / (maxHeight - minHeight)) * delta );
 
 
 		// Dessin de la courbe
@@ -265,11 +280,10 @@ export class HomePage {
 		      sx = i * step,
 		      ex = (i + 1) *step,
 		      // http://stackoverflow.com/questions/13729396/working-out-a-percentage-from-a-array-of-numbers
-		      sy = (0 + ((segments[i].start - minHeight) / (maxHeight - minHeight)) * (100)),
-		      ey = (0 + ((segments[i].end - minHeight) / (maxHeight - minHeight)) * (100));
+		      sy = (0 + ((segments[i].start - minHeight) / (maxHeight - minHeight)) * delta),
+		      ey = (0 + ((segments[i].end - minHeight) / (maxHeight - minHeight)) * delta);
 
 		  	ctx.quadraticCurveTo(sx, sy, ex, ey);
-		  	console.log(sx, sy, ex, ey);
 		}
 
 		ctx.fillStyle = '#596e90';
