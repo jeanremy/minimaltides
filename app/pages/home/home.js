@@ -1,6 +1,7 @@
 import 'rxjs/add/operator/map';
-import {Page, Loading, NavController} from 'ionic-angular';
+import {Page} from 'ionic-angular';
 import {Http} from 'angular2/http';
+import {Loading, NavController} from 'ionic-angular';
 import {Geolocation} from 'ionic-native';
 import {TidesService} from '../../providers/tides-service/tides-service';
 import {GmapService} from '../../providers/gmap-service/gmap-service';
@@ -17,26 +18,62 @@ export class HomePage {
 		return [[Http], [TidesService], [GmapService], [NavController]];
 	}
 
-	constructor(http, tidesService, gmapService, navController) {
-		
+	constructor(http, tidesService, gmapService, NavController) {
+		this.nav = NavController;
 		this.http 			= http;
 		this.tidesService 	= tidesService;
 		this.gmapService 	= gmapService;
 		this.canvas 		= document.getElementById('canvas');
-		this.searchQuery 	= 'Waiting for position...';
-		//this.location 		= {};
-		//this.locations 		= [];
-		this.nav 			= navController;
-		this.loading 		= Loading.create();
+		this.searchQuery 	= '';
+		this.locations 		= [];
+		this.searching 		= false;
+		this.nearestPlace 	= '';
+
+		this.time 			= new Date();
+	}
+
+	test() {
+		alert('Cancel');
+	}
+
+
+	getPrevDay() {
+		this.loading = Loading.create();
+		this.nav.present(this.loading);
+		this.time = new Date(this.time.setDate(this.time.getDate() - 1));
+		this.getTides(this.tides.requestLat, this.tides.requestLon);
+	}
+
+	getNextDay() {
+		this.loading = Loading.create();
+		this.nav.present(this.loading);
+		this.time = new Date(this.time.setDate(this.time.getDate() + 1));
+		this.getTides(this.tides.requestLat, this.tides.requestLon);
+	}
+
+	// About searchQuery
+	showPredictions() {
+		this.searching = true;
+	}
+
+	geolocate() {
+		this.loading = Loading.create();
 
 	    this.nav.present(this.loading);
 
-		this.time 			= new Date();
-
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
-				this.loading.dismiss();
-				this.location = {};
+				this.gmapService.getLocationByCoords(position.coords.latitude, position.coords.longitude).map(res => res.json()).subscribe(data => {
+					if(data.status === "OK") {
+						this.searchQuery = data.results[0].formatted_address;
+						this.searching = false;
+					}
+					else {
+						this.searching = false;
+						this.searchQuery = 'Error';
+					}
+				});
+
 	        	this.getTides(position.coords.latitude, position.coords.longitude, this.time);
 			},
 
@@ -44,24 +81,10 @@ export class HomePage {
 				this.loading.dismiss();
 				console.log(error);
 			},
-			{timeout: 1000, enableHighAccuracy: true}
+			{timeout: 10000, enableHighAccuracy: true}
 	    );
 	}
 
-
-
-
-	getPrevDay() {
-		this.time = new Date(this.time.setDate(this.time.getDate() - 1));
-		this.getTides(this.location.geometry.location.lat, this.location.geometry.location.lng);
-	}
-
-	getNextDay() {
-		this.time = new Date(this.time.setDate(this.time.getDate() + 1));
-		this.getTides(this.location.geometry.location.lat, this.location.geometry.location.lng);
-	}
-
-	// About searchQuery
 	getPredictions(searchbar) {
 		this.gmapService.getPredictions(searchbar.target.value).map(res => res.json()).subscribe(
 
@@ -74,35 +97,26 @@ export class HomePage {
         );
 	}
 
-	getLocationName(lat, lng) {
-		this.location.name = this.gmapService.getLocationByCoords(lat, lng).map(res => res.json()).subscribe(data => {
-			if(data.status === "OK") {
-				//console.log(data.results);
-				this.location = data.results[0];
-				this.searchQuery = data.results[0].address_components[0].long_name;
-			}
-			else {
-				//console.log(data.status);
-			}
-		});
-	}
+	
 
-	resetQuery() {
+	resetQuery($event) {
+		this.searching = false;
+
 		this.searchQuery = this.location.address_components[0].long_name;
 	}
 
 	setLocation(location) {
-		
+		this.searching = false;
+        this.locations = [];
+        console.log(location);
+		this.searchQuery = location.description;
+
 		this.loading = Loading.create();
 	    this.nav.present(this.loading);
 
 		this.gmapService.getLocationById(location.place_id).map(res => res.json()).subscribe( data => {
 			if(data.status === "OK") {
-				this.loading.dismiss();
-				this.location = data.results[0];
-				this.searchQuery = this.location.address_components[0].long_name;
-        		this.locations = [];
-	    		this.getTides(this.location.geometry.location.lat, this.location.geometry.location.lng, this.time);
+	    		this.getTides(data.results[0].geometry.location.lat, data.results[0].geometry.location.lng, this.time);
 			}
 			else {
 				this.loading.dismiss();
@@ -112,20 +126,35 @@ export class HomePage {
 	}
 
 	getTides(lat, lng) {
-		this.loading = Loading.create();
-	    this.nav.present(this.loading);
-
 		this.tidesService.getTides(lat, lng, this.time).map(res => res.json()).subscribe(
             data => {
-				this.loading.dismiss();
+				this.loading.dismiss();            	
                 this.tides = data;
-                this.getLocationName(this.tides.responseLat, this.tides.responseLon);
+                this.checkLocations();
                 this.getExtremeTides();
                 this.drawCanvas();
             },
             err => console.error(err)
 
         );
+	}
+
+	checkLocations() {
+        //console.log(this.tides);
+		if(this.tides.responseLat !== this.tides.requestLat && this.tides.responseLon !== this.tides.requestLon ) {
+			this.gmapService.getLocationByCoords(this.tides.responseLat, this.tides.responseLon).map(res => res.json()).subscribe(data => {
+				console.log(this.tides.responseLat, this.tides.responseLon, data);
+				if(data.status === "OK") {
+					this.nearestPlace = data.results[0].formatted_address;
+				}
+				else {
+					this.nearestPlace = '';
+				}
+			});
+        }
+        else {
+			this.nearestPlace = '';
+        }
 	}
 
 	getExtremeTides() {
@@ -151,92 +180,6 @@ export class HomePage {
 
 	}
 
-	drawChart() {
-
-		var datas = [];
-
-
-		// var data = google.visualization.arrayToDataTable(datas);
-
-		// console.log(datas);
-
-		// var options = {
-		// 	animation: {
-		// 		duration: 300
-		// 	},
-		// 	chartArea: {left:0,top:0,width:'100%',height:'100%'},
-		// 	legend: 'none',
-		// 	hAxis: {
-		// 		titleTextStyle: {color: '#333'},
-		// 		gridlines: {count: 0},
-		// 		viewWindowMode: {min: -2}, 
-		// 		minValue: -2
-		// 	},
-		// 	vAxis: {
-		// 		titleTextStyle: {color: '#333'},
-		// 		gridlines: {count: 0},
-		// 		viewWindowMode: {min: -2}, 
-		// 		minValue: 4
-
-		// 	}
-		// };
-
-		// chart.draw(data, options);
-
-		var chart = document.getElementById('chart');
-
-		var margin = {top: 0, right: 0, bottom: 30, left: 0},
-		    width = chart.offsetWidth - margin.left - margin.right,
-		    height = chart.offsetHeight - margin.top - margin.bottom;
-
-
-		var parseDate = d3.time.format("%d-%b-%y").parse;
-
-		var x = d3.time.scale()
-		    .range([0, width]);
-
-		var y = d3.scale.linear()
-		    .range([height, 0]);
-
-		var xAxis = d3.svg.axis()
-		    .scale(x)
-		    .orient("bottom");
-
-		var yAxis = d3.svg.axis()
-		    .scale(y)
-		    .orient("left");
-
-		var area = d3.svg.area()
-		    .x(function(d) { return x(d.newDate); })
-		    .y0(height)
-		    .y1(function(d) { return y(d.height); });
-
-		var svg = d3.select("#chart").html('').append("svg")
-		    .attr("width", width + margin.left + margin.right)
-		    .attr("height", height + margin.top + margin.bottom)
-		  .append("g")
-		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-
-		  this.tides.heights.forEach(function(d) {
-		    d.newDate = new Date(d.dt*1000);
-		  });
-
-		  x.domain(d3.extent(this.tides.heights, function(d) { return d.newDate; }));
-		  y.domain([d3.min(this.tides.heights, function(d) { return d.height; }), d3.max(this.tides.heights, function(d) { return d.height; })]);
-
-		  svg.append("path")
-		      .datum(this.tides.heights)
-		      .attr("class", "area")
-		      .attr("d", area);
-
-		  svg.append("g")
-		      .attr("class", "x axis")
-		      .attr("transform", "translate(0," + height + ")")
-		      .call(xAxis);
-
-	}
 
 	drawCanvas() {
 		this.canvas = document.getElementById('canvas');
@@ -286,7 +229,7 @@ export class HomePage {
 		  	ctx.quadraticCurveTo(sx, sy, ex, ey);
 		}
 
-		ctx.fillStyle = '#596e90';
+		ctx.fillStyle = '#fff';
 		ctx.fill();
 	}
 

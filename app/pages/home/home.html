@@ -1,17 +1,20 @@
-<ion-content class="home">
+  <ion-content class="home">
 
   <div class="search">
     
     <ion-searchbar
       [(ngModel)]="searchQuery"
       (keyup)="getPredictions($event)"
-      (ionCancel)="resetQuery"
-      show-cancel="true" 
+      (ionClear)="resetQuery($event)"
+      (focus)="searching = true"
+      (ionCancel)="test()"
+      show-cancel="false" 
       placeholder="Search">
     </ion-searchbar>
 
-    <ion-list>
+    <ion-list *ngIf="searching">
 
+      <ion-item class="geolocate" (click)="geolocate()">Geolocate</ion-item>
       <ion-item *ngFor="#location of locations" tappable (click)="setLocation(location)">
         {{location.description}}
       </ion-item>
@@ -20,16 +23,13 @@
     
   </div>
 
+  <p class="nearest" *ngIf="nearestPlace">Nearest beach : <span>{{ nearestPlace }}</span></p>
+
   <div class="day">
 
-    <div class="controls">
-      
-      <span class="arrow prev" tappable (click)="getPrevDay()">Prev</span>
-      <span class="arrow next" tappable (click)="getNextDay()">Next</span>
-
-    </div>
     
-    <h1>{{ time | date:'EEEE' }} <strong>{{ time | date:'d' }} {{ time | date:'MMMM' }}</strong></h1>
+    
+    <h1>{{ time | date:'EEEE' }} <strong>{{ time | date:'MMMM' }}, {{ time | date:'d' }}</strong></h1>
 
   </div>
 
@@ -68,6 +68,13 @@
   <div id="chart"></div>
 
   <canvas id="canvas"></canvas>
+
+  <div *ngIf="tides" class="controls">
+      
+      <span class="arrow prev" tappable (click)="getPrevDay()">Prev</span>
+      <span class="arrow next" tappable (click)="getNextDay()">Next</span>
+
+    </div>
 
   <!-- <div id="chart">
     <svg id="area">
