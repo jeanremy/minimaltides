@@ -32,10 +32,6 @@ export class HomePage {
 		this.time 			= new Date();
 	}
 
-	test() {
-		alert('Cancel');
-	}
-
 
 	getPrevDay() {
 		this.loading = Loading.create();
@@ -65,7 +61,7 @@ export class HomePage {
 			(position) => {
 				this.gmapService.getLocationByCoords(position.coords.latitude, position.coords.longitude).map(res => res.json()).subscribe(data => {
 					if(data.status === "OK") {
-						this.searchQuery = data.results[0].formatted_address;
+						this.searchQuery = this.getCityCountry(data);
 						this.searching = false;
 					}
 					else {
@@ -108,7 +104,6 @@ export class HomePage {
 	setLocation(location) {
 		this.searching = false;
         this.locations = [];
-        console.log(location);
 		this.searchQuery = location.description;
 
 		this.loading = Loading.create();
@@ -139,22 +134,38 @@ export class HomePage {
         );
 	}
 
+	getCityCountry(data) {
+		var temp = '';
+		for (var i = 0; i < data.results[0].address_components.length; i++) {
+			if(data.results[0].address_components[i].types.indexOf("locality") != -1) {
+				temp = data.results[0].address_components[i].long_name;
+			}
+
+			if(data.results[0].address_components[i].types.indexOf("country") != -1) {
+				temp += ', ' +data.results[0].address_components[i].long_name;
+			}
+		}
+		return temp;
+		
+	}
+
 	checkLocations() {
         //console.log(this.tides);
-		if(this.tides.responseLat !== this.tides.requestLat && this.tides.responseLon !== this.tides.requestLon ) {
-			this.gmapService.getLocationByCoords(this.tides.responseLat, this.tides.responseLon).map(res => res.json()).subscribe(data => {
-				console.log(this.tides.responseLat, this.tides.responseLon, data);
-				if(data.status === "OK") {
-					this.nearestPlace = data.results[0].formatted_address;
-				}
-				else {
+        var near = 
+		this.gmapService.getLocationByCoords(this.tides.responseLat, this.tides.responseLon).map(res => res.json()).subscribe(data => {
+			if(data.status === "OK") {
+				near = this.getCityCountry(data);
+				if(near != this.searchQuery) {
+					this.nearestPlace = near;
+				} else {
 					this.nearestPlace = '';
 				}
-			});
-        }
-        else {
-			this.nearestPlace = '';
-        }
+			}
+			else {
+				this.nearestPlace = '';
+			}
+		});
+
 	}
 
 	getExtremeTides() {
