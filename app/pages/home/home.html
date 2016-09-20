@@ -4,18 +4,17 @@
     
     <ion-searchbar
       [(ngModel)]="searchQuery"
-      (keyup)="getPredictions($event)"
-      (ionClear)="resetQuery($event)"
-      (focus)="searching = true"
-      (ionCancel)="test()"
-      show-cancel="false" 
+      (ionInput)="getPredictions($event)"
+      (ionCancel)="resetQuery($event)"
+      (ionFocus)="searching=true"
+      [showCancelButton]="true"
       placeholder="Search">
     </ion-searchbar>
 
     <ion-list *ngIf="searching">
 
       <ion-item class="geolocate" (click)="geolocate()">Geolocate</ion-item>
-      <ion-item *ngFor="#location of locations" tappable (click)="setLocation(location)">
+      <ion-item *ngFor="let location of locations" tappable (click)="setLocation(location)">
         {{location.description}}
       </ion-item>
 
@@ -41,7 +40,7 @@
         High Tides
       </h3>
 
-      <p *ngFor="#extreme of extremes.High">
+      <p *ngFor="let extreme of extremes.High">
 
           <span>{{ extreme.hour }}</span>
           
@@ -55,7 +54,7 @@
         Low Tides
       </h3>
 
-      <p *ngFor="#extreme of extremes.Low">
+      <p *ngFor="let extreme of extremes.Low">
 
           <span>{{ extreme.hour }}</span>
           
