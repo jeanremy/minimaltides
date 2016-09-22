@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import 'rxjs/add/operator/map';
 //import {Page} from 'ionic-angular';
-import {LoadingController, NavController} from 'ionic-angular';
+import {Platform, LoadingController, NavController} from 'ionic-angular';
 import {Geolocation} from 'ionic-native';
 import {TidesService} from '../../providers/tides-service/tides-service';
 import {GmapService} from '../../providers/gmap-service/gmap-service';
@@ -24,13 +24,16 @@ export class HomePage {
 	public tides: any;
 
 
-	constructor(public nav: NavController, private loadingCtrl: LoadingController, public tidesService: TidesService, public gmapService: GmapService) {
+	constructor(public nav: NavController, private loadingCtrl: LoadingController, public platform: Platform, public tidesService: TidesService, public gmapService: GmapService) {
 		this.canvas 		= document.getElementById('canvas');
 		this.searchQuery 	= '';
 		this.locations 		= [];
 		this.searching 		= false;
 		this.nearestPlace 	= '';
 		this.time 			= new Date();
+		this.platform.ready().then(() => { 
+            this.geolocate(); 
+        });
 	}
 
 	getPrevDay() {

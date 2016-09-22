@@ -13,7 +13,7 @@
 
     <ion-list *ngIf="searching">
 
-      <ion-item class="geolocate" (click)="geolocate()">Geolocate</ion-item>
+      <ion-item class="geolocate" (click)="geolocate()"><ion-icon name="locate"></ion-icon>Geolocate</ion-item>
       <ion-item *ngFor="let location of locations" tappable (click)="setLocation(location)">
         {{location.description}}
       </ion-item>
