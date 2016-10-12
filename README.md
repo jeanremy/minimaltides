@@ -1,26 +1,20 @@
-This is a starter template for [Ionic 2](http://ionicframework.com/docs/v2/) projects.
+Ionic 2 App Base
+=====================
 
-## How to use this template
+This is the base template for Ionic 2 starter apps.
 
-*This template does not work on its own*. The shared files for each starter are found in the [ionic2-app-base repo](https://github.com/driftyco/ionic2-app-base).
+## Using this project
 
-To use this template, either create a new ionic project using the ionic node.js utility, or copy the files from this repository into the [Starter App Base](https://github.com/driftyco/ionic2-app-base).
-
-### With the Ionic CLI:
-
-Take the name after `ionic2-starter-`, and that is the name of the template to be used when using the `ionic start` command below:
+You'll need the Ionic CLI with support for v2 apps:
 
 ```bash
-$ sudo npm install -g ionic cordova
-$ ionic start myTabs tabs --v2
+$ npm install -g ionic
 ```
 
-Then, to run it, cd into `myTabs` and run:
+Then run:
 
 ```bash
-$ ionic platform add ios
-$ ionic run ios
+$ ionic start myApp
 ```
 
-Substitute ios for android if not on a Mac.
-
+More info on this can be found on the Ionic [Getting Started](http://ionicframework.com/docs/v2/getting-started/) page.
