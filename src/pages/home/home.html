@@ -22,33 +22,24 @@
       
     </div>
 
-    <p class="nearest" *ngIf="nearestPlace">Nearest beach : <span>{{ nearestPlace }}</span></p>
+    <p class="nearest" *ngIf="nearestPlace">(actually, it's <span>{{ nearestPlace }}</span>)</p>
 
     <div class="day">
       
-    	<h1>{{ time | date:'EEEE' }} <strong>{{ time | date:'MMMM' }}, {{ time | date:'d' }}</strong></h1>
+    	<p class="day__date">{{ time | date:'EEEE' }} {{ time | date:'MMMM' }}, {{ time | date:'d' }}</p>
 
-    	<p *ngIf="status" class="tide">it's going {{ status }}.</p>
+    	<p *ngIf="status" class="day__status">it's going {{ status }}.</p>
 
     </div>
 
+
+    <div id="chart"></div>
+
+    <canvas id="canvas"></canvas>
+
     <div *ngIf="tides" class="extremes">
 
-		<div class="extreme">
-
-			<h3 class="extreme__title">High Tides</h3>
-
-			<p *ngFor="let extreme of extremes.High">
-
-			    <span>{{ extreme.hour }}</span>
-			    
-			</p>
-
-		</div>
-
-		<div class="extreme">
-
-			<h3 class="extreme__title">Low Tides</h3>
+		<div class="extreme low">
 
 			<p *ngFor="let extreme of extremes.Low">
 
@@ -58,16 +49,15 @@
 
 		</div>
 
-    </div>
+		<div class="extreme high">
 
-    <div id="chart"></div>
+			<p *ngFor="let extreme of extremes.High">
 
-    <canvas id="canvas"></canvas>
+			    <span>{{ extreme.hour }}</span>
+			    
+			</p>
 
-    <div *ngIf="tides" class="controls">
-        
-        <span class="arrow prev" tappable (click)="getPrevDay()">Prev</span>
-        <span class="arrow next" tappable (click)="getNextDay()">Next</span>
+		</div>
 
     </div>
 
