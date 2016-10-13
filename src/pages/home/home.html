@@ -1,91 +1,87 @@
-  <ion-content class="home">
+  <ion-content class="home" (swipeleft)="getPrevDay()" (swiperight)="getNextDay()">
 
-  <div class="search">
-    
-    <ion-searchbar
-      [(ngModel)]="searchQuery"
-      (ionInput)="getPredictions($event)"
-      (ionCancel)="resetQuery($event)"
-      (ionFocus)="searching=true"
-      [showCancelButton]="true"
-      placeholder="Search">
-    </ion-searchbar>
-
-    <ion-list *ngIf="searching">
-
-      <ion-item class="geolocate" (click)="geolocate()"><ion-icon name="locate"></ion-icon>Geolocate</ion-item>
-      <ion-item *ngFor="let location of locations" tappable (click)="setLocation(location)">
-        {{location.description}}
-      </ion-item>
-
-    </ion-list>
-    
-  </div>
-
-  <p class="nearest" *ngIf="nearestPlace">Nearest beach : <span>{{ nearestPlace }}</span></p>
-
-  <div class="day">
-
-    
-    
-    <h1>{{ time | date:'EEEE' }} <strong>{{ time | date:'MMMM' }}, {{ time | date:'d' }}</strong></h1>
-
-  </div>
-
-  <div *ngIf="tides" class="extremes">
-
-    <div class="extreme">
-
-      <h3 class="extreme__title">
-        High Tides
-      </h3>
-
-      <p *ngFor="let extreme of extremes.High">
-
-          <span>{{ extreme.hour }}</span>
-          
-      </p>
-
-    </div>
-
-    <div class="extreme">
-
-      <h3 class="extreme__title">
-        Low Tides
-      </h3>
-
-      <p *ngFor="let extreme of extremes.Low">
-
-          <span>{{ extreme.hour }}</span>
-          
-      </p>
-
-    </div>
-
-  </div>
-
-  <div id="chart"></div>
-
-  <canvas id="canvas"></canvas>
-
-  <div *ngIf="tides" class="controls">
+    <div class="search">
       
-      <span class="arrow prev" tappable (click)="getPrevDay()">Prev</span>
-      <span class="arrow next" tappable (click)="getNextDay()">Next</span>
+		<ion-searchbar
+			[(ngModel)]="searchQuery"
+			(ionInput)="getPredictions($event)"
+			(ionCancel)="resetQuery($event)"
+			(ionFocus)="searching=true"
+			[showCancelButton]="true"
+			placeholder="Search">
+		</ion-searchbar>
+
+      <ion-list *ngIf="searching">
+
+		<ion-item class="geolocate" (click)="geolocate()"><ion-icon name="locate"></ion-icon>Geolocate</ion-item>
+		<ion-item *ngFor="let location of locations" tappable (click)="setLocation(location)">
+		  {{location.description}}
+		</ion-item>
+
+      </ion-list>
+      
+    </div>
+
+    <p class="nearest" *ngIf="nearestPlace">Nearest beach : <span>{{ nearestPlace }}</span></p>
+
+    <div class="day">
+      
+    	<h1>{{ time | date:'EEEE' }} <strong>{{ time | date:'MMMM' }}, {{ time | date:'d' }}</strong></h1>
+
+    	<p *ngIf="status" class="tide">it's going {{ status }}.</p>
 
     </div>
 
-  <!-- <div id="chart">
-    <svg id="area">
-      <g class="grid x-grid">
-        <line stroke="#000" x1="0" x2="100" y1="100" y2="100"></line>
-      </g>
-      <g>
-        <text x="25" y="100">06h</text>
-        <text x="50" y="100">12h</text>
-        <text x="75" y="100">18h</text>
-      </g>
-    </svg>
-  </div> -->
+    <div *ngIf="tides" class="extremes">
+
+		<div class="extreme">
+
+			<h3 class="extreme__title">High Tides</h3>
+
+			<p *ngFor="let extreme of extremes.High">
+
+			    <span>{{ extreme.hour }}</span>
+			    
+			</p>
+
+		</div>
+
+		<div class="extreme">
+
+			<h3 class="extreme__title">Low Tides</h3>
+
+			<p *ngFor="let extreme of extremes.Low">
+
+			    <span>{{ extreme.hour }}</span>
+			    
+			</p>
+
+		</div>
+
+    </div>
+
+    <div id="chart"></div>
+
+    <canvas id="canvas"></canvas>
+
+    <div *ngIf="tides" class="controls">
+        
+        <span class="arrow prev" tappable (click)="getPrevDay()">Prev</span>
+        <span class="arrow next" tappable (click)="getNextDay()">Next</span>
+
+    </div>
+
+    <!-- <div id="chart">
+      <svg id="area">
+        <g class="grid x-grid">
+          <line stroke="#000" x1="0" x2="100" y1="100" y2="100"></line>
+        </g>
+        <g>
+          <text x="25" y="100">06h</text>
+          <text x="50" y="100">12h</text>
+          <text x="75" y="100">18h</text>
+        </g>
+      </svg>
+    </div> -->
     
 </ion-content>

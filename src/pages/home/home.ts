@@ -20,6 +20,7 @@ export class HomePage {
 	public nearestPlace: any;
 	public time : any;
 	public tides: any;
+	public status: any;
 
 
 	constructor(public nav: NavController, private loadingCtrl: LoadingController, public platform: Platform, public tidesService: TidesService, public gmapService: GmapService) {
@@ -32,6 +33,7 @@ export class HomePage {
 		this.platform.ready().then(() => { 
             this.geolocate(); 
         });
+        console.log(this.time);
 	}
 
 	getPrevDay() {
@@ -93,7 +95,6 @@ export class HomePage {
         );
 	}
 
-	
 
 	resetQuery($event) {
 		this.searching = false;
@@ -174,6 +175,7 @@ export class HomePage {
 		this.extremes = {Low: [], High: []};
 
 		// Boucle à refaire pour parcourir le tableau, et prendre la valeur la plus proche.
+		let find = false;
 
 		for(let i = 0; i < length; i++) {
 
@@ -186,10 +188,14 @@ export class HomePage {
 				hour: hour+':'+min
 			});
 			index = i;
+
+			if(day.getTime() > this.time.getTime() && find === false) {
+				find = true;
+				this.status = this.tides.extremes[i].type === 'High' ? 'up':'down';
+			}
 		}
 
 	}
-
 
 	drawCanvas() {
 		this.canvas = document.getElementById('canvas');
