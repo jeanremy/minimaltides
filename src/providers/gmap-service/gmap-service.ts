@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Response } from '@angular/http';
+import { Observable } from "rxjs/Observable";
 import 'rxjs/add/operator/map';
 
 
 @Injectable()
 export class GmapService {
 
-	public data: any;
-	public key: 'AIzaSyDu-QZnDzl-mfuSUVumhUv9wsAIUAQSNsg';
+	private key: any;
 
 	constructor(private http: Http) {
 		this.key = 'AIzaSyDu-QZnDzl-mfuSUVumhUv9wsAIUAQSNsg';

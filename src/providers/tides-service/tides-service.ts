@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Response } from '@angular/http';
+import { Observable } from "rxjs/Observable";
 import 'rxjs/add/operator/map';
 
 
@@ -12,16 +13,15 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class TidesService {
   
-  private key: '79b7e2cf-dcd5-4f6c-930d-f89e9cc4c34c';
+  private key: any;
   
   constructor(private http: Http) {
     this.key = '79b7e2cf-dcd5-4f6c-930d-f89e9cc4c34c';
-
   }
 
   getTides(lat, lng, date) {
-    let startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    let timestamp = startOfDay / 1000;
+    let startOfDay = +new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    let timestamp = +startOfDay / 1000;
     let tides = this.http.get('https://www.worldtides.info/api?heights&extremes&lat='+lat+'&lon='+lng+'&start='+timestamp+'&key='+this.key+'&length=86400');
     return tides;
   }

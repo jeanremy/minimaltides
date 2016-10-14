@@ -41,21 +41,25 @@
 
 		<div class="extreme low">
 
-			<p *ngFor="let extreme of extremes.Low">
+      <ion-icon class="extreme__icon"  ios="ios-arrow-round-down-outline" md="ios-arrow-round-down-outline"></ion-icon>
+		
+			<div class="extreme__hours">
 
-			    <span>{{ extreme.hour }}</span>
+			    <p *ngFor="let extreme of extremes.Low">{{ extreme.hour }}</p>
 			    
-			</p>
+			</div>
 
 		</div>
 
 		<div class="extreme high">
 
-			<p *ngFor="let extreme of extremes.High">
+      <ion-icon class="extreme__icon" ios="ios-arrow-round-up-outline" md="ios-arrow-round-up-outline"></ion-icon>
 
-			    <span>{{ extreme.hour }}</span>
+			<div class="extreme__hours">
+
+			    <p *ngFor="let extreme of extremes.High">{{ extreme.hour }}</p>
 			    
-			</p>
+			</div>
 
 		</div>
 

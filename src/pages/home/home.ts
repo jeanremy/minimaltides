@@ -5,6 +5,8 @@ import { Platform, LoadingController, NavController } from 'ionic-angular';
 import { TidesService } from '../../providers/tides-service/tides-service';
 import { GmapService } from '../../providers/gmap-service/gmap-service';
 
+declare var d3: any;
+
 @Component({
   templateUrl: 'home.html'
 })
@@ -198,10 +200,49 @@ export class HomePage {
 	}
 
 	drawCanvas() {
-		this.canvas = document.getElementById('canvas');
+
+		// test d3
+		let bezierLine = d3.svg.line()
+			.x(function(d) { return d[0]; })
+			.y(function(d) { return d[1]; })
+			.interpolate("cardinal");
+		let svg = d3.select("#chart")
+			.append("svg")
+			.attr("width", window.innerWidth)
+			.attr("id", "tides-chart")
+			.attr("xmlns", "http://www.w3.org/2000/svg");
+
+		// on cree une ligne avec tous les points, mais sans les courbes
+		let points 			= new Array(),
+			step 			= Math.round((window.innerWidth / this.tides.heights.length)),
+			delta 			= 40,
+			heights 		= new Array();
+
+		for(let i = 0, j = this.tides.heights.length; i < j; i++) {
+			if(i !== 0) {
+		    	heights.push(this.tides.heights[i].height);
+		  	}
+		}
+
+		let maxHeight = Math.max.apply(null, heights),
+			minHeight = Math.min.apply(null, heights);
+
+		for(let i = 0, j = heights.length; i < j; i++) {
+			let x = i * step,
+				y = (0 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
+			points.push([x,y]);
+		}
+
+      	svg.append('path')
+			.attr("d", bezierLine(points))
+			.attr("stroke", "#4b5c84")
+			.attr("stroke-width", 1)
+			.attr("fill", "none");
+
+		//this.canvas = document.getElementById('canvas');
+		/*
 		let ctx 			= this.canvas.getContext('2d'),
 			delta 			= 40, // l'aimplitude de la courbe sur
-			heights 		= new Array(),
 			segments 		= new Array();
 
 		for(let i = 0, j = this.tides.heights.length; i < j; i++) {
@@ -245,5 +286,7 @@ export class HomePage {
 
 		ctx.fillStyle = '#fff';
 		ctx.fill();
+		*/
 	}
+
 }
