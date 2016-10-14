@@ -187,15 +187,18 @@ export class HomePage {
 
 			this.extremes[this.tides.extremes[i].type].push({
 				type: this.tides.extremes[i].type,
-				hour: hour+':'+min
+				hour: hour+':'+min,
+				selected: (+day.getTime() > +this.time.getTime() && find === false) ? true:false
 			});
 			index = i;
 
-			if(day.getTime() > this.time.getTime() && find === false) {
-				find = true;
+			if(+day.getTime() > +this.time.getTime() && find === false) {
 				this.status = this.tides.extremes[i].type === 'High' ? 'up':'down';
+				find = true;
 			}
+
 		}
+		console.log(this.extremes);
 
 	}
 
