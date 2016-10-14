@@ -215,7 +215,7 @@ export class HomePage {
 		// on cree une ligne avec tous les points, mais sans les courbes
 		let points 			= new Array(),
 			step 			= Math.round((window.innerWidth / this.tides.heights.length)),
-			delta 			= 40,
+			delta 			= 50,
 			heights 		= new Array();
 
 		for(let i = 0, j = this.tides.heights.length; i < j; i++) {
