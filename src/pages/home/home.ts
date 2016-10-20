@@ -32,6 +32,7 @@ export class HomePage {
 	public time : any;
 	public tides: any;
 	public status: any;
+	private svg: any;
 
 
 	constructor(public nav: NavController, private loadingCtrl: LoadingController, public platform: Platform, public tidesService: TidesService, public gmapService: GmapService) {
@@ -43,6 +44,18 @@ export class HomePage {
 		this.time 			= new Date();
 		this.platform.ready().then(() => { 
             this.geolocate(); 
+
+			this.svg 			= d3.select("#chart")
+				.append("svg")
+				.attr("width", window.innerWidth)
+				.attr("id", "tides-chart")
+				.attr("xmlns", "http://www.w3.org/2000/svg")
+				.append('path')
+				.attr("d", 'M0,0,'+window.innerWidth+',0')
+				.attr("id", "line")
+				.attr("stroke", "#4b5c84")
+				.attr("stroke-width", 1)
+				.attr("fill", "none");
         });
 	}
 
@@ -109,7 +122,6 @@ export class HomePage {
 	resetQuery($event) {
 		this.searching = false;
 		this.searchQuery = '';
-		console.log($event);
 	}
 
 	setLocation(location) {
@@ -176,7 +188,6 @@ export class HomePage {
 				this.nearestPlace = '';
 			}
 		});
-
 	}
 
 	getExtremeTides() {
@@ -187,7 +198,7 @@ export class HomePage {
 		// Boucle à refaire pour parcourir le tableau, et prendre la valeur la plus proche.
 		let find = false;
 
-		for(let i = 0; i < length; i++) {
+		for (let i = 0; i < length; i++) {
 
 			let day 	= new Date(this.tides.extremes[i].date),
 				hour 	= ("0" + day.getHours()).slice(-2),
@@ -211,7 +222,6 @@ export class HomePage {
 			this.status = this.tides.extremes[length - 1].type === 'High' ? 'down':'up';
 			find = true;
 		}
-
 	}
 
 	drawCanvas() {
@@ -250,7 +260,6 @@ export class HomePage {
 		    }
 		}
 		
-		console.log(step *  (heights.length -1));
 
 		let maxHeight = Math.max.apply(null, heights),
 			minHeight = Math.min.apply(null, heights);
@@ -277,6 +286,8 @@ export class HomePage {
 			.attr("stroke", "#8299BA")
 			.attr("stroke-width", 2)
 			.attr("fill", "none");
+      	
+      	
 
 		let totalLength = backPath.node().getTotalLength();
 

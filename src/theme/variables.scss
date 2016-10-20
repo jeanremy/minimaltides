@@ -73,10 +73,10 @@ $ionicons-font-path: "../assets/fonts";
 
 @font-face {
     font-family: 'montserratbold';
-    src: url('../../assets/fonts/montserrat-bold.woff2') format('woff2'),
-         url('../../assets/fonts/montserrat-bold.woff') format('woff'),
-         url('../../assets/fonts/montserrat-bold.ttf') format('truetype'),
-         url('../../assets/fonts/montserrat-bold.svg#montserratbold') format('svg');
+    src: url('../assets/fonts/montserrat-bold.woff2') format('woff2'),
+         url('../assets/fonts/montserrat-bold.woff') format('woff'),
+         url('../assets/fonts/montserrat-bold.ttf') format('truetype'),
+         url('../assets/fonts/montserrat-bold.svg#montserratbold') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -87,10 +87,10 @@ $ionicons-font-path: "../assets/fonts";
 
 @font-face {
     font-family: 'montserratregular';
-    src: url('../../assets/fonts/montserrat-regular.woff2') format('woff2'),
-         url('../../assets/fonts/montserrat-regular.woff') format('woff'),
-         url('../../assets/fonts/montserrat-regular.ttf') format('truetype'),
-         url('../../assets/fonts/montserrat-regular.svg#montserratregular') format('svg');
+    src: url('../assets/fonts/montserrat-regular.woff2') format('woff2'),
+         url('../assets/fonts/montserrat-regular.woff') format('woff'),
+         url('../assets/fonts/montserrat-regular.ttf') format('truetype'),
+         url('../assets/fonts/montserrat-regular.svg#montserratregular') format('svg');
     font-weight: normal;
     font-style: normal;
 
