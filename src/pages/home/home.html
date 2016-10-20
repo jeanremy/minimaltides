@@ -28,7 +28,7 @@
       
     	<p class="day__date">{{ time | date:'EEEE' }} {{ time | date:'MMMM' }}, {{ time | date:'d' }}</p>
 
-    	<p *ngIf="status" class="day__status">it's going {{ status }}.</p>
+    	<p class="day__status">it's going <span *ngIf="status">{{ status }}</span></p>
 
     </div>
 

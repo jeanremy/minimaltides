@@ -7,6 +7,15 @@ import { GmapService } from '../../providers/gmap-service/gmap-service';
 
 declare var d3: any;
 
+/* TODO 
+
+	faire loading ...
+	faire transition sur left/right
+	mettre un circle sur la line
+	factoriser un peu le dessin, c'est le bordel
+
+*/
+
 @Component({
   templateUrl: 'home.html'
 })
@@ -35,7 +44,6 @@ export class HomePage {
 		this.platform.ready().then(() => { 
             this.geolocate(); 
         });
-        console.log(this.time);
 	}
 
 	getPrevDay() {
@@ -192,55 +200,111 @@ export class HomePage {
 			});
 			index = i;
 
+			// a améliorer pour les soirs 
 			if(+day.getTime() > +this.time.getTime() && find === false) {
 				this.status = this.tides.extremes[i].type === 'High' ? 'up':'down';
 				find = true;
 			}
-
 		}
-		console.log(this.extremes);
+		/* si rien trouvé, on prend la dernière et ce sera l'inverse */
+		if(find === false) {
+			this.status = this.tides.extremes[length - 1].type === 'High' ? 'down':'up';
+			find = true;
+		}
 
 	}
 
 	drawCanvas() {
 
 		// test d3
-		let bezierLine = d3.svg.line()
+		let line = d3.svg.line()
 			.x(function(d) { return d[0]; })
 			.y(function(d) { return d[1]; })
 			.interpolate("cardinal");
+
 		let svg = d3.select("#chart")
 			.append("svg")
 			.attr("width", window.innerWidth)
 			.attr("id", "tides-chart")
 			.attr("xmlns", "http://www.w3.org/2000/svg");
+		let backPath = svg.append('path')
+			.attr("id", "line");
+		let currentPath = svg.append('path')
+			.attr("id", "current-line");
 
 		// on cree une ligne avec tous les points, mais sans les courbes
 		let points 			= new Array(),
-			step 			= Math.round((window.innerWidth / this.tides.heights.length)),
+			currentPoints 	= new Array(),
+			step 			= (window.innerWidth / (this.tides.heights.length - 1)),
 			delta 			= 50,
-			heights 		= new Array();
+			heights 		= new Array(),
+			currentHeights 	= new Array();
+
 
 		for(let i = 0, j = this.tides.heights.length; i < j; i++) {
-			if(i !== 0) {
-		    	heights.push(this.tides.heights[i].height);
-		  	}
+			let date = new Date(this.tides.heights[i].dt);
+		    heights.push(this.tides.heights[i].height);
+
+		    if(+date < (+this.time.getTime() / 1000)) {
+		    	currentHeights.push(this.tides.heights[i].height);		    	
+		    }
 		}
+		
+		console.log(step *  (heights.length -1));
 
 		let maxHeight = Math.max.apply(null, heights),
 			minHeight = Math.min.apply(null, heights);
 
+		/* la ligne de fond */
 		for(let i = 0, j = heights.length; i < j; i++) {
 			let x = i * step,
-				y = (0 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
+				y = (2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
 			points.push([x,y]);
 		}
 
-      	svg.append('path')
-			.attr("d", bezierLine(points))
-			.attr("stroke", "#4b5c84")
-			.attr("stroke-width", 1)
+		let curmaxHeight = Math.max.apply(null, currentHeights),
+			curminHeight = Math.min.apply(null, currentHeights);
+
+		/* la ligne du jour */
+		for(let i = 0, j = currentHeights.length; i < j; i++) {
+			let x = i * step,
+				y = (2 + ((currentHeights[i] - curminHeight) / (curmaxHeight - curminHeight)) * delta);
+			currentPoints.push([x,y]);
+		}
+
+      	d3.select("#line")
+			.attr("d", line(points))
+			.attr("stroke", "#8299BA")
+			.attr("stroke-width", 2)
 			.attr("fill", "none");
+
+		let totalLength = backPath.node().getTotalLength();
+
+		d3.select("#line")
+			.attr("stroke-dasharray", totalLength + " " + totalLength)
+			.attr("stroke-dashoffset", totalLength)
+			.transition()
+			.duration(1000)
+			.ease("linear")
+			.attr("stroke-dashoffset", 0);
+
+
+		d3.select("#current-line")
+			.attr("d", line(currentPoints))
+			.attr("stroke", "#263960")
+			.attr("stroke-width", 2)
+			.attr("fill", "none");
+
+		let currentTotalLength = currentPath.node().getTotalLength();
+
+		d3.select("#current-line")
+			.attr("stroke-dasharray", currentTotalLength + " " + currentTotalLength)
+			.attr("stroke-dashoffset", currentTotalLength)
+			.transition()
+			.delay(1000)
+			.duration(1000)
+			.ease("linear")
+			.attr("stroke-dashoffset", 0);
 
 		//this.canvas = document.getElementById('canvas');
 		/*
