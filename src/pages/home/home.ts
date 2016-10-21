@@ -32,6 +32,7 @@ export class HomePage {
 	public time : any;
 	public tides: any;
 	public status: any;
+	public swipe: any;
 	private svg: any;
 
 
@@ -42,6 +43,8 @@ export class HomePage {
 		this.searching 		= false;
 		this.nearestPlace 	= '';
 		this.time 			= new Date();
+		this.status 		= "";
+		this.swipe  = '';
 		this.platform.ready().then(() => { 
             this.geolocate(); 
 
@@ -53,19 +56,18 @@ export class HomePage {
 
 			this.svg.append('path').attr("id", "line")
 			this.svg.append('path').attr("id", "current-line")
+			this.svg.append('circle').attr("id", "circle")
         });
 	}
 
 	getPrevDay() {
-		this.loading = this.loadingCtrl.create({ dismissOnPageChange: true });
-		this.loading.present();
+		this.swipe = 'prev';
 		this.time = new Date(this.time.setDate(this.time.getDate() - 1));
 		this.getTides(this.tides.requestLat, this.tides.requestLon);
 	}
 
 	getNextDay() {
-		this.loading = this.loadingCtrl.create({ dismissOnPageChange: true });
-		this.loading.present();
+		this.swipe = 'next';
 		this.time = new Date(this.time.setDate(this.time.getDate() + 1));
 		this.getTides(this.tides.requestLat, this.tides.requestLon);
 	}
@@ -76,8 +78,6 @@ export class HomePage {
 	}
 
 	geolocate() {
-		this.loading = this.loadingCtrl.create({ dismissOnPageChange: true });
-		this.loading.present();
 
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
@@ -96,7 +96,6 @@ export class HomePage {
 			},
 
 			(error) => {
-				this.loading.dismiss();
 				console.log(error);
 			},
 			{timeout: 10000, enableHighAccuracy: true}
@@ -142,8 +141,7 @@ export class HomePage {
 
 	getTides(lat, lng) {
 		this.tidesService.getTides(lat, lng, this.time).map(res => res.json()).subscribe(
-            data => {
-				this.loading.dismiss();            	
+            data => {           	
                 this.tides = data;
                 this.checkLocations();
                 this.getExtremeTides();
@@ -191,6 +189,7 @@ export class HomePage {
 		let index = 0;
 		let length = this.tides.extremes.length;
 		this.extremes = {Low: [], High: []};
+		this.swipe = '';
 
 		// Boucle à refaire pour parcourir le tableau, et prendre la valeur la plus proche.
 		let find = false;
@@ -231,6 +230,7 @@ export class HomePage {
 
 		let backPath = d3.select("#line");
 		let currentPath = d3.select("#current-line");
+		let circle = d3.select("#circle");
 		
 
 		// on cree une ligne avec tous les points, mais sans les courbes
@@ -252,8 +252,8 @@ export class HomePage {
 		}
 		
 
-		let maxHeight = Math.max.apply(null, heights),
-			minHeight = Math.min.apply(null, heights);
+		let minHeight = Math.max.apply(null, heights),
+			maxHeight = Math.min.apply(null, heights);
 
 		/* la ligne de fond */
 		for(let i = 0, j = heights.length; i < j; i++) {
@@ -261,6 +261,8 @@ export class HomePage {
 				y = (2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
 			points.push([x,y]);
 		}
+
+		console.log(heights, points);
 
 
 		/* la ligne du jour */
@@ -276,11 +278,23 @@ export class HomePage {
 			.attr("stroke-width", 2)
 			.attr("fill", "none");
       	
+		currentPath
+			.attr("d", line(currentPoints))
+			.attr("stroke", "#263960")
+			.attr("stroke-width", 2)
+			.attr("fill", "none");
       	
+      	this.animateChart([backPath, currentPath, circle]);
 
-		let totalLength = backPath.node().getTotalLength();
+		
+	}
 
-		backPath
+	animateChart(el) {
+
+		let totalLength 		= el[0].node().getTotalLength(),
+			currentTotalLength 	= el[1].node().getTotalLength();
+
+		el[0]
 			.attr("stroke-dasharray", totalLength + " " + totalLength)
 			.attr("stroke-dashoffset", totalLength)
 			.transition()
@@ -289,15 +303,8 @@ export class HomePage {
 			.attr("stroke-dashoffset", 0);
 
 
-		currentPath
-			.attr("d", line(currentPoints))
-			.attr("stroke", "#263960")
-			.attr("stroke-width", 2)
-			.attr("fill", "none");
 
-		let currentTotalLength = currentPath.node().getTotalLength();
-
-		currentPath
+		el[1]
 			.attr("stroke-dasharray", currentTotalLength + " " + currentTotalLength)
 			.attr("stroke-dashoffset", currentTotalLength)
 			.transition()
@@ -305,55 +312,11 @@ export class HomePage {
 			.duration(1000)
 			.ease("linear")
 			.attr("stroke-dashoffset", 0);
+	}
 
-		//this.canvas = document.getElementById('canvas');
-		/*
-		let ctx 			= this.canvas.getContext('2d'),
-			delta 			= 40, // l'aimplitude de la courbe sur
-			segments 		= new Array();
+	animateIn() {
+		
 
-		for(let i = 0, j = this.tides.heights.length; i < j; i++) {
-			if(i !== 0) {
-		    	heights.push(this.tides.heights[i].height);
-		  	}
-		}
-
-		for(let i = 0, j = heights.length; i < j; i++) {
-			if(i !== 0) {
-		    	segments.push({start:heights[i-1], end: (heights[i])})
-		  	}
-		}
-
-		// calcul des max et min
-		let maxHeight = Math.max.apply(null, heights),
-			minHeight = Math.min.apply(null, heights);
-
-
-
-		// Dessin du canvas (rectangle)
-		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-		ctx.beginPath();
-		ctx.moveTo(this.canvas.width, (0 + ((segments[segments.length - 1].end - minHeight) / (maxHeight - minHeight)) * delta));
-		ctx.lineTo(this.canvas.width, this.canvas.height);
-		ctx.lineTo(0, this.canvas.height);
-		ctx.lineTo(0, (0 + (segments[0].start - minHeight) / (maxHeight - minHeight)) * delta );
-
-
-		// Dessin de la courbe
-		for(let i = 0, j = segments.length; i < j; i++) {
-		    let step = Math.round((this.canvas.width / segments.length)),
-		      sx = i * step,
-		      ex = (i + 1) *step,
-		      // http://stackoverflow.com/questions/13729396/working-out-a-percentage-from-a-array-of-numbers
-		      sy = (0 + ((segments[i].start - minHeight) / (maxHeight - minHeight)) * delta),
-		      ey = (0 + ((segments[i].end - minHeight) / (maxHeight - minHeight)) * delta);
-
-		  	ctx.quadraticCurveTo(sx, sy, ex, ey);
-		}
-
-		ctx.fillStyle = '#fff';
-		ctx.fill();
-		*/
 	}
 
 }

@@ -1,7 +1,7 @@
-  <ion-content class="home" (swiperight)="getPrevDay()" (swipeleft)="getNextDay()">
+<ion-content class="home" (swiperight)="getPrevDay()" (swipeleft)="getNextDay()">
 
-    <div class="search">
-      
+	<div class="search">
+
 		<ion-searchbar
 			[(ngModel)]="searchQuery"
 			(ionInput)="getPredictions($event)"
@@ -11,73 +11,64 @@
 			placeholder="Search">
 		</ion-searchbar>
 
-      <ion-list *ngIf="searching">
+		<ion-list *ngIf="searching">
 
-		<ion-item class="geolocate" (click)="geolocate()"><ion-icon name="locate"></ion-icon>Geolocate</ion-item>
-		<ion-item *ngFor="let location of locations" tappable (click)="setLocation(location)">
-		  {{location.description}}
-		</ion-item>
+			<ion-item class="geolocate" (click)="geolocate()"><ion-icon name="locate"></ion-icon>Geolocate</ion-item>
+			<ion-item *ngFor="let location of locations" tappable (click)="setLocation(location)">
+				{{location.description}}
+			</ion-item>
 
-      </ion-list>
-      
-    </div>
+		</ion-list>
 
-    <p class="nearest" *ngIf="nearestPlace">(actually, it's <span>{{ nearestPlace }}</span>)</p>
+	</div>
 
-    <div class="day">
-      
-      <div class="day__date__container">
-    	     <p class="day__date">{{ time | date:'EEEE' }} {{ time | date:'MMMM' }}, {{ time | date:'d' }}</p>
-      </div>
+	<p class="nearest" *ngIf="nearestPlace">(actually, it's <span>{{ nearestPlace }}</span>)</p>
 
-    	<p class="day__status">it's going <span *ngIf="status">{{ status }}</span></p>
+	<div class="day">
 
-    </div>
+		<div class="animation-container">
+
+			<p class="day__date {{ swipe | lowercase }}">{{ time | date:'EEEE' }} {{ time | date:'MMMM' }}, {{ time | date:'d' }}</p>
+
+		</div>
+
+		<div class="animation-container">
+
+			<p class="day__status {{ status | lowercase }}">it's going <span *ngIf="status">{{ status }}</span></p>
+
+		</div>
+
+	</div>
 
 
-    <div id="chart"></div>
+	<div id="chart"></div>
 
-    <canvas id="canvas"></canvas>
-
-    <div *ngIf="tides" class="extremes">
+	<div *ngIf="tides" class="extremes">
 
 		<div class="extreme low">
 
-      <ion-icon class="extreme__icon"  ios="ios-arrow-round-down-outline" md="ios-arrow-round-down-outline"></ion-icon>
-		
+			<ion-icon class="extreme__icon"  ios="ios-arrow-round-down-outline" md="ios-arrow-round-down-outline"></ion-icon>
+
 			<div class="extreme__hours">
 
-			    <p *ngFor="let extreme of extremes.Low" [class.selected]="extreme.selected === true">{{ extreme.hour }}</p>
-			    
+				<p *ngFor="let extreme of extremes.Low" [class.selected]="extreme.selected === true">{{ extreme.hour }}</p>
+
 			</div>
 
 		</div>
 
 		<div class="extreme high">
 
-      <ion-icon class="extreme__icon" ios="ios-arrow-round-up-outline" md="ios-arrow-round-up-outline"></ion-icon>
+			<ion-icon class="extreme__icon" ios="ios-arrow-round-up-outline" md="ios-arrow-round-up-outline"></ion-icon>
 
 			<div class="extreme__hours">
 
-			    <p *ngFor="let extreme of extremes.High" [class.selected]="extreme.selected === true">{{ extreme.hour }}</p>
-			    
+				<p *ngFor="let extreme of extremes.High" [class.selected]="extreme.selected === true">{{ extreme.hour }}</p>
+
 			</div>
 
 		</div>
 
-    </div>
+	</div>
 
-    <!-- <div id="chart">
-      <svg id="area">
-        <g class="grid x-grid">
-          <line stroke="#000" x1="0" x2="100" y1="100" y2="100"></line>
-        </g>
-        <g>
-          <text x="25" y="100">06h</text>
-          <text x="50" y="100">12h</text>
-          <text x="75" y="100">18h</text>
-        </g>
-      </svg>
-    </div> -->
-    
 </ion-content>

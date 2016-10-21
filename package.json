@@ -12,7 +12,7 @@
     "build:before": "build",
     "run:before": "build"
   },
-    "dependencies": {
+  "dependencies": {
     "@angular/common": "^2.0.0",
     "@angular/compiler": "^2.0.0",
     "@angular/compiler-cli": "0.6.2",
@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^2.0.0",
     "@angular/platform-server": "^2.0.0",
     "@ionic/storage": "^1.0.3",
+    "d3": "^4.2.8",
     "ionic-angular": "^2.0.0-rc.1",
     "ionic-native": "^2.2.3",
     "ionicons": "^3.0.0",
