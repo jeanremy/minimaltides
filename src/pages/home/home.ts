@@ -45,17 +45,14 @@ export class HomePage {
 		this.platform.ready().then(() => { 
             this.geolocate(); 
 
-			this.svg 			= d3.select("#chart")
+			this.svg = d3.select("#chart")
 				.append("svg")
 				.attr("width", window.innerWidth)
 				.attr("id", "tides-chart")
-				.attr("xmlns", "http://www.w3.org/2000/svg")
-				.append('path')
-				.attr("d", 'M0,0,'+window.innerWidth+',0')
-				.attr("id", "line")
-				.attr("stroke", "#4b5c84")
-				.attr("stroke-width", 1)
-				.attr("fill", "none");
+				.attr("xmlns", "http://www.w3.org/2000/svg");
+
+			this.svg.append('path').attr("id", "line")
+			this.svg.append('path').attr("id", "current-line")
         });
 	}
 
@@ -232,15 +229,9 @@ export class HomePage {
 			.y(function(d) { return d[1]; })
 			.interpolate("cardinal");
 
-		let svg = d3.select("#chart")
-			.append("svg")
-			.attr("width", window.innerWidth)
-			.attr("id", "tides-chart")
-			.attr("xmlns", "http://www.w3.org/2000/svg");
-		let backPath = svg.append('path')
-			.attr("id", "line");
-		let currentPath = svg.append('path')
-			.attr("id", "current-line");
+		let backPath = d3.select("#line");
+		let currentPath = d3.select("#current-line");
+		
 
 		// on cree une ligne avec tous les points, mais sans les courbes
 		let points 			= new Array(),
@@ -271,17 +262,15 @@ export class HomePage {
 			points.push([x,y]);
 		}
 
-		let curmaxHeight = Math.max.apply(null, currentHeights),
-			curminHeight = Math.min.apply(null, currentHeights);
 
 		/* la ligne du jour */
 		for(let i = 0, j = currentHeights.length; i < j; i++) {
 			let x = i * step,
-				y = (2 + ((currentHeights[i] - curminHeight) / (curmaxHeight - curminHeight)) * delta);
+				y = (2 + ((currentHeights[i] - minHeight) / (maxHeight - minHeight)) * delta);
 			currentPoints.push([x,y]);
 		}
 
-      	d3.select("#line")
+      	backPath
 			.attr("d", line(points))
 			.attr("stroke", "#8299BA")
 			.attr("stroke-width", 2)
@@ -291,7 +280,7 @@ export class HomePage {
 
 		let totalLength = backPath.node().getTotalLength();
 
-		d3.select("#line")
+		backPath
 			.attr("stroke-dasharray", totalLength + " " + totalLength)
 			.attr("stroke-dashoffset", totalLength)
 			.transition()
@@ -300,7 +289,7 @@ export class HomePage {
 			.attr("stroke-dashoffset", 0);
 
 
-		d3.select("#current-line")
+		currentPath
 			.attr("d", line(currentPoints))
 			.attr("stroke", "#263960")
 			.attr("stroke-width", 2)
@@ -308,7 +297,7 @@ export class HomePage {
 
 		let currentTotalLength = currentPath.node().getTotalLength();
 
-		d3.select("#current-line")
+		currentPath
 			.attr("stroke-dasharray", currentTotalLength + " " + currentTotalLength)
 			.attr("stroke-dashoffset", currentTotalLength)
 			.transition()

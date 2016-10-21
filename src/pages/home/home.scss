@@ -4,7 +4,11 @@ $main: #4b5c84;
 $darkmain: #263960;
 
 
-
+@keyframes pending {
+	to {
+		width: 30px;
+	}
+}
 
 
 .home {
@@ -113,6 +117,23 @@ $darkmain: #263960;
 			text-transform: uppercase;
 			padding: 0;
 			margin: 0;
+			opacity: 1;
+			transform: translate3d(0, 0, 0);
+			transition: all .3s cubic-bezier(0, 0, 0.2, 1);
+
+			&__container {
+				overflow: hidden;
+			}
+
+			&.prev {
+				transform: translate3d(-20px, 0, 0);
+				opacity: 0;
+			}
+
+			&.next {
+				transform: translate3d(20px, 0, 0);
+				opacity: 0;
+			}
 		}
 
 		&__status {
@@ -120,6 +141,18 @@ $darkmain: #263960;
 			font-size: 34px;
 			font-family: 'montserratbold';
 			margin: 0;
+
+			&.pending span {
+				&:after {
+					animation: pending 3s steps(4,end) infinite;
+					content: "\2026";
+					width: 0;
+					display: inline-block;
+					vertical-align: bottom;
+					overflow: hidden;
+				}
+			}
+
 		}
 
 		

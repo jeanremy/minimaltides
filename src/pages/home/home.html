@@ -1,4 +1,4 @@
-  <ion-content class="home" (swipeleft)="getPrevDay()" (swiperight)="getNextDay()">
+  <ion-content class="home" (swiperight)="getPrevDay()" (swipeleft)="getNextDay()">
 
     <div class="search">
       
@@ -26,7 +26,9 @@
 
     <div class="day">
       
-    	<p class="day__date">{{ time | date:'EEEE' }} {{ time | date:'MMMM' }}, {{ time | date:'d' }}</p>
+      <div class="day__date__container">
+    	     <p class="day__date">{{ time | date:'EEEE' }} {{ time | date:'MMMM' }}, {{ time | date:'d' }}</p>
+      </div>
 
     	<p class="day__status">it's going <span *ngIf="status">{{ status }}</span></p>
 
