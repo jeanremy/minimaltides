@@ -10,7 +10,6 @@ declare var d3: any;
 /* TODO 
 
 	faire loading ...
-	faire transition sur left/right
 	mettre un circle sur la line
 	factoriser un peu le dessin, c'est le bordel
 
@@ -33,7 +32,15 @@ export class HomePage {
 	public tides: any;
 	public status: any;
 	public swipe: any;
+
+	// d3
 	private svg: any;
+	private flatPoints: any;
+	private curvePoints: any;
+	private line: any;
+	private backPath: any;
+	private currentPath: any;
+	private circle: any;
 
 
 	constructor(public nav: NavController, private loadingCtrl: LoadingController, public platform: Platform, public tidesService: TidesService, public gmapService: GmapService) {
@@ -44,32 +51,41 @@ export class HomePage {
 		this.nearestPlace 	= '';
 		this.time 			= new Date();
 		this.status 		= "";
-		this.swipe  = '';
+		this.swipe  		= '';
+		//d3
+		this.flatPoints		= new Array();
+		this.curvePoints	= new Array();
+		this.line 			= d3.svg.line()
+			.x(function(d) { return d[0]; })
+			.y(function(d) { return d[1]; })
+			.interpolate("cardinal");
+
+
 		this.platform.ready().then(() => { 
             this.geolocate(); 
-
 			this.svg = d3.select("#chart")
 				.append("svg")
 				.attr("width", window.innerWidth)
 				.attr("id", "tides-chart")
 				.attr("xmlns", "http://www.w3.org/2000/svg");
 
-			this.svg.append('path').attr("id", "line")
-			this.svg.append('path').attr("id", "current-line")
-			this.svg.append('circle').attr("id", "circle")
+			this.backPath = this.svg.append('path').attr("id", "line");
+			this.currentPath = this.svg.append('path').attr("id", "current-line");
+			this.circle = this.svg.append('circle').attr("id", "circle");
         });
 	}
 
-	getPrevDay() {
-		this.swipe = 'prev';
-		this.time = new Date(this.time.setDate(this.time.getDate() - 1));
-		this.getTides(this.tides.requestLat, this.tides.requestLon);
-	}
-
-	getNextDay() {
-		this.swipe = 'next';
-		this.time = new Date(this.time.setDate(this.time.getDate() + 1));
-		this.getTides(this.tides.requestLat, this.tides.requestLon);
+	navigate(dir) {
+		this.animateOut();
+		this.swipe = dir;
+		if(dir === "next") {
+			this.time = new Date(this.time.setDate(this.time.getDate() + 1));
+			this.getTides(this.tides.requestLat, this.tides.requestLon);
+		}else {				
+			this.time = new Date(this.time.setDate(this.time.getDate() - 1));
+			this.getTides(this.tides.requestLat, this.tides.requestLon);
+		}
+		
 	}
 
 	// About searchQuery
@@ -222,20 +238,7 @@ export class HomePage {
 
 	drawCanvas() {
 
-		// test d3
-		let line = d3.svg.line()
-			.x(function(d) { return d[0]; })
-			.y(function(d) { return d[1]; })
-			.interpolate("cardinal");
-
-		let backPath = d3.select("#line");
-		let currentPath = d3.select("#current-line");
-		let circle = d3.select("#circle");
-		
-
-		// on cree une ligne avec tous les points, mais sans les courbes
-		let points 			= new Array(),
-			currentPoints 	= new Array(),
+		let currentPoints 	= new Array(),
 			step 			= (window.innerWidth / (this.tides.heights.length - 1)),
 			delta 			= 50,
 			heights 		= new Array(),
@@ -255,14 +258,28 @@ export class HomePage {
 		let minHeight = Math.max.apply(null, heights),
 			maxHeight = Math.min.apply(null, heights);
 
-		/* la ligne de fond */
+
+		
 		for(let i = 0, j = heights.length; i < j; i++) {
 			let x = i * step,
 				y = (2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
-			points.push([x,y]);
+			this.curvePoints.push([x,y]);
+			this.flatPoints.push([x, 2 + (((maxHeight - minHeight) / 2) / (maxHeight - minHeight)) * delta]);
 		}
 
-		console.log(heights, points);
+		/* la ligne de fond */
+		this.backPath
+			.attr("d", this.line(this.flatPoints))
+			.attr("stroke", "#8299BA")
+			.attr("stroke-width", 2)
+			.attr("fill", "none")
+			.transition()
+			.duration(1000)
+			.ease('circle')
+			.attr('d', this.line(this.curvePoints)); 
+
+
+		
 
 
 		/* la ligne du jour */
@@ -272,39 +289,17 @@ export class HomePage {
 			currentPoints.push([x,y]);
 		}
 
-      	backPath
-			.attr("d", line(points))
-			.attr("stroke", "#8299BA")
-			.attr("stroke-width", 2)
-			.attr("fill", "none");
       	
-		currentPath
-			.attr("d", line(currentPoints))
+		this.currentPath
+			.attr('class', '')
+			.attr("d", this.line(currentPoints))
 			.attr("stroke", "#263960")
 			.attr("stroke-width", 2)
 			.attr("fill", "none");
       	
-      	this.animateChart([backPath, currentPath, circle]);
+		let currentTotalLength 		= this.currentPath.node().getTotalLength();
 
-		
-	}
-
-	animateChart(el) {
-
-		let totalLength 		= el[0].node().getTotalLength(),
-			currentTotalLength 	= el[1].node().getTotalLength();
-
-		el[0]
-			.attr("stroke-dasharray", totalLength + " " + totalLength)
-			.attr("stroke-dashoffset", totalLength)
-			.transition()
-			.duration(1000)
-			.ease("linear")
-			.attr("stroke-dashoffset", 0);
-
-
-
-		el[1]
+		this.currentPath
 			.attr("stroke-dasharray", currentTotalLength + " " + currentTotalLength)
 			.attr("stroke-dashoffset", currentTotalLength)
 			.transition()
@@ -314,9 +309,16 @@ export class HomePage {
 			.attr("stroke-dashoffset", 0);
 	}
 
-	animateIn() {
-		
+	animateOut() {
 
+		this.currentPath
+			.attr('class', 'fade');
+		this.backPath
+			.transition()
+			.delay(1000)
+			.duration(1000)
+			.ease('circle')
+			.attr('d', this.line(this.flatPoints)); 
 	}
 
 }
