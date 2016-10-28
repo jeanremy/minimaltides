@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import 'rxjs/add/operator/map';
-//import {Page} from 'ionic-angular';
-import { Platform, LoadingController, NavController } from 'ionic-angular';
+import { Platform } from 'ionic-angular';
 import { TidesService } from '../../providers/tides-service/tides-service';
 import { GmapService } from '../../providers/gmap-service/gmap-service';
 
@@ -20,7 +19,6 @@ declare var d3: any;
 })
 export class HomePage {
 
-	public canvas: any;
 	public searchQuery: any;
 	public locations: any;
 	public location: any;
@@ -32,6 +30,7 @@ export class HomePage {
 	public tides: any;
 	public status: any;
 	public swipe: any;
+	private pending: any;
 
 	// d3
 	private svg: any;
@@ -43,8 +42,7 @@ export class HomePage {
 	private circle: any;
 
 
-	constructor(public nav: NavController, private loadingCtrl: LoadingController, public platform: Platform, public tidesService: TidesService, public gmapService: GmapService) {
-		this.canvas 		= document.getElementById('canvas');
+	constructor(public platform: Platform, public tidesService: TidesService, public gmapService: GmapService) {
 		this.searchQuery 	= '';
 		this.locations 		= [];
 		this.searching 		= false;
@@ -52,6 +50,7 @@ export class HomePage {
 		this.time 			= new Date();
 		this.status 		= "";
 		this.swipe  		= '';
+		this.pending 		= true;
 		//d3
 		this.flatPoints		= new Array();
 		this.curvePoints	= new Array();
@@ -73,6 +72,10 @@ export class HomePage {
 			this.currentPath = this.svg.append('path').attr("id", "current-line");
 			this.circle = this.svg.append('circle').attr("id", "circle");
         });
+	}
+
+	isPending() {
+		return this.pending ? 'pending':'';
 	}
 
 	navigate(dir) {
@@ -140,9 +143,6 @@ export class HomePage {
 		this.searching = false;
         this.locations = [];
 		this.searchQuery = location.description;
-
-		this.loading = this.loadingCtrl.create({ dismissOnPageChange: true });
-		this.loading.present();
 
 		this.gmapService.getLocationById(location.place_id).map(res => res.json()).subscribe( data => {
 			if(data.status === "OK") {
@@ -238,19 +238,29 @@ export class HomePage {
 
 	drawCanvas() {
 
+		this.pending = false;
+		this.curvePoints = new Array();
+		this.flatPoints = new Array();
+
 		let currentPoints 	= new Array(),
 			step 			= (window.innerWidth / (this.tides.heights.length - 1)),
 			delta 			= 50,
 			heights 		= new Array(),
-			currentHeights 	= new Array();
+			currentHeights 	= new Array(),
+			circlePosition 	= 0,
+			circleCoords	= new Array();
 
-
+		let found = false;
 		for(let i = 0, j = this.tides.heights.length; i < j; i++) {
 			let date = new Date(this.tides.heights[i].dt);
 		    heights.push(this.tides.heights[i].height);
 
 		    if(+date < (+this.time.getTime() / 1000)) {
 		    	currentHeights.push(this.tides.heights[i].height);		    	
+		    }
+		    if(+date > (+this.time.getTime() / 1000) && found === false ) {
+		    	circlePosition = i;
+		    	found = true;		    	
 		    }
 		}
 		
@@ -265,21 +275,19 @@ export class HomePage {
 				y = (2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
 			this.curvePoints.push([x,y]);
 			this.flatPoints.push([x, 2 + (((maxHeight - minHeight) / 2) / (maxHeight - minHeight)) * delta]);
+			if( i === circlePosition) {
+				circleCoords = [i * step, 2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta];
+			}
 		}
+
 
 		/* la ligne de fond */
 		this.backPath
 			.attr("d", this.line(this.flatPoints))
-			.attr("stroke", "#8299BA")
-			.attr("stroke-width", 2)
-			.attr("fill", "none")
 			.transition()
-			.duration(1000)
+			.duration(500)
 			.ease('circle')
-			.attr('d', this.line(this.curvePoints)); 
-
-
-		
+			.attr('d', this.line(this.curvePoints)); 		
 
 
 		/* la ligne du jour */
@@ -291,11 +299,8 @@ export class HomePage {
 
       	
 		this.currentPath
-			.attr('class', '')
-			.attr("d", this.line(currentPoints))
-			.attr("stroke", "#263960")
-			.attr("stroke-width", 2)
-			.attr("fill", "none");
+			.attr('opacity', 1)
+			.attr("d", this.line(currentPoints));
       	
 		let currentTotalLength 		= this.currentPath.node().getTotalLength();
 
@@ -303,22 +308,39 @@ export class HomePage {
 			.attr("stroke-dasharray", currentTotalLength + " " + currentTotalLength)
 			.attr("stroke-dashoffset", currentTotalLength)
 			.transition()
-			.delay(1000)
-			.duration(1000)
+			.delay(500)
+			.duration(500)
 			.ease("linear")
 			.attr("stroke-dashoffset", 0);
+
+		this.circle
+			.attr('cx', circleCoords[0])
+			.attr('cy', circleCoords[1])
+			.attr('r', 10)
+			.transition()
+			.delay(1000)
+			.duration(300)
+			.attr('opacity', 1);
 	}
 
 	animateOut() {
 
+		this.pending = true;
+
 		this.currentPath
-			.attr('class', 'fade');
+			.transition()
+			.duration(300)
+			.attr('opacity', 0);
+		this.circle
+			.transition()
+			.duration(300)
+			.attr('opacity', 0);
 		this.backPath
 			.transition()
-			.delay(1000)
-			.duration(1000)
+			.delay(350)
+			.duration(500)
 			.ease('circle')
-			.attr('d', this.line(this.flatPoints)); 
+			.attr('d', this.line(this.flatPoints));
 	}
 
 }
