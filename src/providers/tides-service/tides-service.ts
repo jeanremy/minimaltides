@@ -16,7 +16,7 @@ export class TidesService {
   private key: any;
   
   constructor(private http: Http) {
-    this.key = '79b7e2cf-dcd5-4f6c-930d-f89e9cc4c34c';
+    this.key = 'ad2f8bb5-e1a6-4f2b-9743-9ef857f3cb33';
   }
 
   getTides(lat, lng, date) {
