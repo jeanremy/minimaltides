@@ -45,7 +45,7 @@
 
 	<div *ngIf="tides" class="extremes">
 
-		<div class="extreme low">
+		<div class="extreme low" [@fade]="fadeState">
 
 			<ion-icon class="extreme__icon"  ios="ios-arrow-round-down-outline" md="ios-arrow-round-down-outline"></ion-icon>
 
@@ -57,7 +57,7 @@
 
 		</div>
 
-		<div class="extreme high">
+		<div class="extreme high" [@fade]="fadeState">
 
 			<ion-icon class="extreme__icon" ios="ios-arrow-round-up-outline" md="ios-arrow-round-up-outline"></ion-icon>
 

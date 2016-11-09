@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, trigger, state, style, transition, animate } from '@angular/core';
 import 'rxjs/add/operator/map';
 import { Platform } from 'ionic-angular';
 import { TidesService } from '../../providers/tides-service/tides-service';
@@ -15,9 +15,29 @@ declare var d3: any;
 */
 
 @Component({
-  templateUrl: 'home.html'
+  templateUrl: 'home.html',
+  animations: [
+ 
+    trigger('fade', [
+      state('fadein', style({
+        transform: 'translate3d(0,20px,0)',
+        opacity: 0,
+        visibility: 'hidden'
+      })),
+      state('fadeout', style({
+        transform: 'translate3d(0,0,0)',
+        opacity: 1,
+        visibility: 'visible'
+      })),
+      transition('* => *', animate('300ms ease'))
+    ])
+  ]
 })
+
 export class HomePage {
+
+	// Animations class
+	public fadeState: String = 'fadein';
 
 	public searchQuery: any;
 	public locations: any;
@@ -36,10 +56,12 @@ export class HomePage {
 	private svg: any;
 	private flatPoints: any;
 	private curvePoints: any;
+	private currentPoints: any;
 	private line: any;
 	private backPath: any;
 	private currentPath: any;
 	private circle: any;
+	private circleCoords: any;
 
 
 	constructor(public platform: Platform, public tidesService: TidesService, public gmapService: GmapService) {
@@ -54,6 +76,8 @@ export class HomePage {
 		//d3
 		this.flatPoints		= new Array();
 		this.curvePoints	= new Array();
+		this.currentPoints	= new Array();
+		this.circleCoords	= new Array();
 		this.line 			= d3.svg.line()
 			.x(function(d) { return d[0]; })
 			.y(function(d) { return d[1]; })
@@ -79,16 +103,19 @@ export class HomePage {
 	}
 
 	navigate(dir) {
-		this.animateOut();
 		this.swipe = dir;
 		if(dir === "next") {
 			this.time = new Date(this.time.setDate(this.time.getDate() + 1));
-			this.getTides(this.tides.requestLat, this.tides.requestLon);
 		}else {				
 			this.time = new Date(this.time.setDate(this.time.getDate() - 1));
-			this.getTides(this.tides.requestLat, this.tides.requestLon);
 		}
-		
+		let self = this;
+
+		this.animateOut(function() {
+
+			self.getTides(self.tides.requestLat, self.tides.requestLon);
+			
+		});
 	}
 
 	// About searchQuery
@@ -241,14 +268,14 @@ export class HomePage {
 		this.pending = false;
 		this.curvePoints = new Array();
 		this.flatPoints = new Array();
+		this.currentPoints 	= new Array()
+		this.circleCoords	= new Array();
 
-		let currentPoints 	= new Array(),
-			step 			= (window.innerWidth / (this.tides.heights.length - 1)),
+		let step 			= (window.innerWidth / (this.tides.heights.length - 1)),
 			delta 			= 50,
 			heights 		= new Array(),
 			currentHeights 	= new Array(),
-			circlePosition 	= 0,
-			circleCoords	= new Array();
+			circlePosition 	= 0;
 
 		let found = false;
 		for(let i = 0, j = this.tides.heights.length; i < j; i++) {
@@ -276,31 +303,39 @@ export class HomePage {
 			this.curvePoints.push([x,y]);
 			this.flatPoints.push([x, 2 + (((maxHeight - minHeight) / 2) / (maxHeight - minHeight)) * delta]);
 			if( i === circlePosition) {
-				circleCoords = [i * step, 2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta];
+				this.circleCoords = [i * step, 2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta];
 			}
 		}
 
 
 		/* la ligne de fond */
 		this.backPath
-			.attr("d", this.line(this.flatPoints))
-			.transition()
-			.duration(500)
-			.ease('circle')
-			.attr('d', this.line(this.curvePoints)); 		
+			.attr("d", this.line(this.flatPoints));	
 
 
 		/* la ligne du jour */
 		for(let i = 0, j = currentHeights.length; i < j; i++) {
 			let x = i * step,
 				y = (2 + ((currentHeights[i] - minHeight) / (maxHeight - minHeight)) * delta);
-			currentPoints.push([x,y]);
+			this.currentPoints.push([x,y]);
 		}
 
-      	
+		this.animateIn();
+	}
+
+	animateIn() {
+
+		// anime de la ligne de fond
+		this.backPath
+			.transition()
+			.duration(500)
+			.ease('circle')
+			.attr('d', this.line(this.curvePoints)); 
+
+		// Anime de la courve et du point		
 		this.currentPath
 			.attr('opacity', 1)
-			.attr("d", this.line(currentPoints));
+			.attr("d", this.line(this.currentPoints));
       	
 		let currentTotalLength 		= this.currentPath.node().getTotalLength();
 
@@ -314,18 +349,22 @@ export class HomePage {
 			.attr("stroke-dashoffset", 0);
 
 		this.circle
-			.attr('cx', circleCoords[0])
-			.attr('cy', circleCoords[1])
+			.attr('cx', this.circleCoords[0])
+			.attr('cy', this.circleCoords[1])
 			.attr('r', 10)
 			.transition()
 			.delay(1000)
 			.duration(300)
 			.attr('opacity', 1);
+
+		this.fadeState = "fadeout";
+
 	}
 
-	animateOut() {
+	animateOut(callback) {
 
 		this.pending = true;
+		this.fadeState = "fadein";
 
 		this.currentPath
 			.transition()
@@ -340,7 +379,10 @@ export class HomePage {
 			.delay(350)
 			.duration(500)
 			.ease('circle')
-			.attr('d', this.line(this.flatPoints));
+			.attr('d', this.line(this.flatPoints))
+			.each("end", callback);
+
+		callback();
 	}
 
 }
