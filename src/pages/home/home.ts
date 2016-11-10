@@ -140,7 +140,7 @@ export class HomePage {
 			},
 
 			(error) => {
-				alert(error);
+				alert(error.message);
 			},
 			{timeout: 10000, enableHighAccuracy: true}
 	    );
@@ -362,8 +362,8 @@ export class HomePage {
 
 		this.circle
 			.transition()
-			.delay(1000)
-			.duration(300)
+			.delay(500)
+			.duration(500)
 			.attrTween("transform", this.translateAlong(this.currentPath.node()))
 			.attr('opacity', 1);
 
