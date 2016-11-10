@@ -49,7 +49,6 @@ export class HomePage {
 	public time : any;
 	public tides: any;
 	public status: any;
-	public swipe: any;
 	private pending: any;
 
 	// d3
@@ -71,8 +70,8 @@ export class HomePage {
 		this.nearestPlace 	= '';
 		this.time 			= new Date();
 		this.status 		= "";
-		this.swipe  		= '';
 		this.pending 		= true;
+		this.fadeState 		= 'fadein';
 		//d3
 		this.flatPoints		= new Array();
 		this.curvePoints	= new Array();
@@ -103,7 +102,6 @@ export class HomePage {
 	}
 
 	navigate(dir) {
-		this.swipe = dir;
 		if(dir === "next") {
 			this.time = new Date(this.time.setDate(this.time.getDate() + 1));
 		}else {				
@@ -142,7 +140,7 @@ export class HomePage {
 			},
 
 			(error) => {
-				console.log(error);
+				alert(error);
 			},
 			{timeout: 10000, enableHighAccuracy: true}
 	    );
@@ -177,7 +175,6 @@ export class HomePage {
 			}
 			else {
 				this.loading.dismiss();
-				console.log(data.status);
 			}
         });
 	}
@@ -232,7 +229,6 @@ export class HomePage {
 		let index = 0;
 		let length = this.tides.extremes.length;
 		this.extremes = {Low: [], High: []};
-		this.swipe = '';
 
 		// Boucle à refaire pour parcourir le tableau, et prendre la valeur la plus proche.
 		let find = false;
@@ -265,9 +261,9 @@ export class HomePage {
 
 	drawCanvas() {
 
-		this.pending = false;
-		this.curvePoints = new Array();
-		this.flatPoints = new Array();
+		this.pending 		= false;
+		this.curvePoints 	= new Array();
+		this.flatPoints 	= new Array();
 		this.currentPoints 	= new Array()
 		this.circleCoords	= new Array();
 
@@ -275,9 +271,9 @@ export class HomePage {
 			delta 			= 50,
 			heights 		= new Array(),
 			currentHeights 	= new Array(),
-			circlePosition 	= 0;
+			circlePosition 	= 0,
+			found = false;
 
-		let found = false;
 		for(let i = 0, j = this.tides.heights.length; i < j; i++) {
 			let date = new Date(this.tides.heights[i].dt);
 		    heights.push(this.tides.heights[i].height);
@@ -286,7 +282,7 @@ export class HomePage {
 		    	currentHeights.push(this.tides.heights[i].height);		    	
 		    }
 		    if(+date > (+this.time.getTime() / 1000) && found === false ) {
-		    	circlePosition = i;
+		    	circlePosition = i - 1;
 		    	found = true;		    	
 		    }
 		}
@@ -299,31 +295,52 @@ export class HomePage {
 		
 		for(let i = 0, j = heights.length; i < j; i++) {
 			let x = i * step,
-				y = (2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
+				y = (10 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
 			this.curvePoints.push([x,y]);
-			this.flatPoints.push([x, 2 + (((maxHeight - minHeight) / 2) / (maxHeight - minHeight)) * delta]);
-			if( i === circlePosition) {
-				this.circleCoords = [i * step, 2 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta];
+			this.flatPoints.push([x, 10 + (((maxHeight - minHeight) / 2) / (maxHeight - minHeight)) * delta]);
+			if( i === 0) {
+				this.circleCoords = [i * step, 10 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta];
 			}
 		}
-
 
 		/* la ligne de fond */
 		this.backPath
 			.attr("d", this.line(this.flatPoints));	
 
-
 		/* la ligne du jour */
 		for(let i = 0, j = currentHeights.length; i < j; i++) {
 			let x = i * step,
-				y = (2 + ((currentHeights[i] - minHeight) / (maxHeight - minHeight)) * delta);
+				y = (10 + ((currentHeights[i] - minHeight) / (maxHeight - minHeight)) * delta);
 			this.currentPoints.push([x,y]);
 		}
+
+		this.currentPath
+			.attr('opacity', 1)
+			.attr("d", this.line(this.currentPoints));     
+
+		this.circle
+			.attr("transform", "translate(" + this.currentPoints[0] + ")")
+			.attr('r', 10)
+			.attr('opacity', 0);
 
 		this.animateIn();
 	}
 
+	translateAlong(path) {
+		var l = path.getTotalLength();
+		return function(i) {
+			return function(t) {
+				var p = path.getPointAtLength(t * l);
+				return "translate(" + p.x + "," + p.y + ")";//Move marker
+			}
+		}
+	}
+
 	animateIn() {
+		
+		let currentTotalLength 	= this.currentPath.node().getTotalLength();
+		
+		this.fadeState = "fadeout";
 
 		// anime de la ligne de fond
 		this.backPath
@@ -332,12 +349,7 @@ export class HomePage {
 			.ease('circle')
 			.attr('d', this.line(this.curvePoints)); 
 
-		// Anime de la courve et du point		
-		this.currentPath
-			.attr('opacity', 1)
-			.attr("d", this.line(this.currentPoints));
-      	
-		let currentTotalLength 		= this.currentPath.node().getTotalLength();
+		// Anime de la courve et du point		 	
 
 		this.currentPath
 			.attr("stroke-dasharray", currentTotalLength + " " + currentTotalLength)
@@ -349,15 +361,12 @@ export class HomePage {
 			.attr("stroke-dashoffset", 0);
 
 		this.circle
-			.attr('cx', this.circleCoords[0])
-			.attr('cy', this.circleCoords[1])
-			.attr('r', 10)
 			.transition()
 			.delay(1000)
 			.duration(300)
+			.attrTween("transform", this.translateAlong(this.currentPath.node()))
 			.attr('opacity', 1);
 
-		this.fadeState = "fadeout";
 
 	}
 
@@ -382,7 +391,6 @@ export class HomePage {
 			.attr('d', this.line(this.flatPoints))
 			.each("end", callback);
 
-		callback();
 	}
 
 }
