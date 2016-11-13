@@ -19,17 +19,17 @@ declare var d3: any;
   animations: [
  
     trigger('fade', [
-      state('fadein', style({
+      state('out', style({
         transform: 'translate3d(0,20px,0)',
         opacity: 0,
         visibility: 'hidden'
       })),
-      state('fadeout', style({
+      state('in', style({
         transform: 'translate3d(0,0,0)',
         opacity: 1,
         visibility: 'visible'
       })),
-      transition('* => *', animate('300ms ease'))
+      transition('out <=> in', animate('300ms ease'))
     ])
   ]
 })
@@ -37,46 +37,34 @@ declare var d3: any;
 export class HomePage {
 
 	// Animations class
-	public fadeState: String = 'fadein';
+	public fadeState: String = 'out';
 
-	public searchQuery: any;
-	public locations: any;
+	public searchQuery: String = '';
+	public locations: Array<any> = [];
 	public location: any;
 	public loading: any;
 	public extremes: any;
-	public searching: any;
-	public nearestPlace: any;
+	public searching: Boolean = false;
+	public nearestPlace: String = '';
 	public time : any;
 	public tides: any;
-	public status: any;
-	private pending: any;
+	public status: String = '';
 
 	// d3
 	private svg: any;
-	private flatPoints: any;
-	private curvePoints: any;
-	private currentPoints: any;
+	private curvePoints: Array<any> = [];
+	private currentPoints: Array<any> = [];
 	private line: any;
 	private backPath: any;
+	private backTotalLength: any;
 	private currentPath: any;
+	private currentTotalLength: any;
 	private circle: any;
-	private circleCoords: any;
-
+	private circleCoords: Array<any> = [];
 
 	constructor(public platform: Platform, public tidesService: TidesService, public gmapService: GmapService) {
-		this.searchQuery 	= '';
-		this.locations 		= [];
-		this.searching 		= false;
-		this.nearestPlace 	= '';
+
 		this.time 			= new Date();
-		this.status 		= "";
-		this.pending 		= true;
-		this.fadeState 		= 'fadein';
-		//d3
-		this.flatPoints		= new Array();
-		this.curvePoints	= new Array();
-		this.currentPoints	= new Array();
-		this.circleCoords	= new Array();
 		this.line 			= d3.svg.line()
 			.x(function(d) { return d[0]; })
 			.y(function(d) { return d[1]; })
@@ -97,27 +85,22 @@ export class HomePage {
         });
 	}
 
-	isPending() {
-		return this.pending ? 'pending':'';
-	}
-
 	navigate(dir) {
+
 		if(dir === "next") {
 			this.time = new Date(this.time.setDate(this.time.getDate() + 1));
 		}else {				
 			this.time = new Date(this.time.setDate(this.time.getDate() - 1));
 		}
-		let self = this;
 
-		this.animateOut(function() {
-
-			self.getTides(self.tides.requestLat, self.tides.requestLon);
-			
-		});
+		this.animateOut().then((response) => {
+    		this.getTides(this.tides.requestLat, this.tides.requestLon)
+  		});
 	}
 
 	// About searchQuery
 	showPredictions() {
+
 		this.searching = true;
 	}
 
@@ -146,7 +129,9 @@ export class HomePage {
 	    );
 	}
 
+
 	getPredictions($event) {
+
 		this.gmapService.getPredictions($event.target.value).map(res => res.json()).subscribe(
 
             data => {
@@ -160,11 +145,14 @@ export class HomePage {
 
 
 	resetQuery($event) {
+
 		this.searching = false;
 		this.searchQuery = '';
 	}
 
+
 	setLocation(location) {
+
 		this.searching = false;
         this.locations = [];
 		this.searchQuery = location.description;
@@ -174,12 +162,14 @@ export class HomePage {
 	    		this.getTides(data.results[0].geometry.location.lat, data.results[0].geometry.location.lng);
 			}
 			else {
-				this.loading.dismiss();
+				alert(data.status);
 			}
         });
 	}
 
+
 	getTides(lat, lng) {
+
 		this.tidesService.getTides(lat, lng, this.time).map(res => res.json()).subscribe(
             data => {           	
                 this.tides = data;
@@ -193,6 +183,7 @@ export class HomePage {
 	}
 
 	getCityCountry(data) {
+
 		let temp = '';
 		for (let i = 0; i < data.results[0].address_components.length; i++) {
 			if(data.results[0].address_components[i].types.indexOf("locality") != -1) {
@@ -207,8 +198,9 @@ export class HomePage {
 		
 	}
 
+
 	checkLocations() {
-        //console.log(this.tides);
+
         let near = '';
 		this.gmapService.getLocationByCoords(this.tides.responseLat, this.tides.responseLon).map(res => res.json()).subscribe(data => {
 			if(data.status === "OK") {
@@ -225,7 +217,9 @@ export class HomePage {
 		});
 	}
 
+
 	getExtremeTides() {
+
 		let index = 0;
 		let length = this.tides.extremes.length;
 		this.extremes = {Low: [], High: []};
@@ -259,11 +253,10 @@ export class HomePage {
 		}
 	}
 
+
 	drawCanvas() {
 
-		this.pending 		= false;
 		this.curvePoints 	= new Array();
-		this.flatPoints 	= new Array();
 		this.currentPoints 	= new Array()
 		this.circleCoords	= new Array();
 
@@ -297,7 +290,6 @@ export class HomePage {
 			let x = i * step,
 				y = (10 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
 			this.curvePoints.push([x,y]);
-			this.flatPoints.push([x, 10 + (((maxHeight - minHeight) / 2) / (maxHeight - minHeight)) * delta]);
 			if( i === 0) {
 				this.circleCoords = [i * step, 10 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta];
 			}
@@ -305,7 +297,7 @@ export class HomePage {
 
 		/* la ligne de fond */
 		this.backPath
-			.attr("d", this.line(this.flatPoints));	
+			.attr("d", this.line(this.curvePoints));	
 
 		/* la ligne du jour */
 		for(let i = 0, j = currentHeights.length; i < j; i++) {
@@ -322,11 +314,13 @@ export class HomePage {
 			.attr("transform", "translate(" + this.currentPoints[0] + ")")
 			.attr('r', 10)
 			.attr('opacity', 0);
+		
+		this.fadeState = 'in';
 
 		this.animateIn();
 	}
 
-	translateAlong(path) {
+	_translateAlong(path) {
 		var l = path.getTotalLength();
 		return function(i) {
 			return function(t) {
@@ -338,22 +332,28 @@ export class HomePage {
 
 	animateIn() {
 		
-		let currentTotalLength 	= this.currentPath.node().getTotalLength();
+		this.backTotalLength 	= this.backPath.node().getTotalLength();
+		this.currentTotalLength = this.currentPath.node().getTotalLength();
 		
-		this.fadeState = "fadeout";
 
 		// anime de la ligne de fond
 		this.backPath
+			.attr('opacity', 0)
+			.attr("stroke-dasharray", this.backTotalLength + " " + this.backTotalLength)
+			.attr("stroke-dashoffset", this.backTotalLength)
+			.attr('opacity', 1)
 			.transition()
 			.duration(500)
-			.ease('circle')
-			.attr('d', this.line(this.curvePoints)); 
+			.ease("circle")
+			.attr("stroke-dashoffset", 0);
 
-		// Anime de la courve et du point		 	
+		// Anime de la courbe et du point		 	
 
 		this.currentPath
-			.attr("stroke-dasharray", currentTotalLength + " " + currentTotalLength)
-			.attr("stroke-dashoffset", currentTotalLength)
+			.attr('opacity', 0)
+			.attr("stroke-dasharray", this.currentTotalLength + " " + this.currentTotalLength)
+			.attr("stroke-dashoffset", this.currentTotalLength)
+			.attr('opacity', 1)
 			.transition()
 			.delay(500)
 			.duration(500)
@@ -364,32 +364,40 @@ export class HomePage {
 			.transition()
 			.delay(500)
 			.duration(500)
-			.attrTween("transform", this.translateAlong(this.currentPath.node()))
+			.attrTween("transform", this._translateAlong(this.currentPath.node()))
 			.attr('opacity', 1);
 
 
 	}
 
-	animateOut(callback) {
+	animateOut() {
 
-		this.pending = true;
-		this.fadeState = "fadein";
+		//MARCHE PAs
+		return new Promise((resolve, reject) => {
+  			this.fadeState = 'out'; // for transiotn
 
-		this.currentPath
-			.transition()
-			.duration(300)
-			.attr('opacity', 0);
-		this.circle
-			.transition()
-			.duration(300)
-			.attr('opacity', 0);
-		this.backPath
-			.transition()
-			.delay(350)
-			.duration(500)
-			.ease('circle')
-			.attr('d', this.line(this.flatPoints))
-			.each("end", callback);
+
+			this.currentPath
+				.transition()
+				.duration(300)
+				.ease("circle")
+				.attr("stroke-dashoffset", '-' + this.currentTotalLength);
+			this.circle
+				.transition()
+				.duration(300)
+				.attr('opacity', 0);
+			this.backPath
+				.transition()
+				.delay(300)
+				.duration(500)
+				.ease("circle")
+				.attr("stroke-dashoffset", '-' + this.backTotalLength)
+				.delay(300)
+				.each('end', resolve());
+
+  		});
+
+		
 
 	}
 
