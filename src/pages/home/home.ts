@@ -3,10 +3,14 @@ import 'rxjs/add/operator/map';
 import { Platform } from 'ionic-angular';
 import { TidesService } from '../../providers/tides-service/tides-service';
 import { GmapService } from '../../providers/gmap-service/gmap-service';
+import { Geolocation } from 'ionic-native';
+
+
+
 
 declare var d3: any;
 
-/* TODO 
+/* TODO
 
 	faire loading ...
 	mettre un circle sur la line
@@ -17,7 +21,7 @@ declare var d3: any;
 @Component({
   templateUrl: 'home.html',
   animations: [
- 
+
     trigger('fade', [
       state('out', style({
         transform: 'translate3d(0,20px,0)',
@@ -37,18 +41,18 @@ declare var d3: any;
 export class HomePage {
 
 	// Animations class
-	public fadeState: String = 'out';
+	public fadeState: string = 'out';
 
-	public searchQuery: String = '';
+	public searchQuery: string = '';
 	public locations: Array<any> = [];
 	public location: any;
 	public loading: any;
 	public extremes: any;
 	public searching: Boolean = false;
-	public nearestPlace: String = '';
+	public nearestPlace: string = '';
 	public time : any;
 	public tides: any;
-	public status: String = '';
+	public status: string = '';
 
 	// d3
 	private svg: any;
@@ -71,8 +75,8 @@ export class HomePage {
 			.interpolate("cardinal");
 
 
-		this.platform.ready().then(() => { 
-            this.geolocate(); 
+		this.platform.ready().then(() => {
+            this.geolocate();
 			this.svg = d3.select("#chart")
 				.append("svg")
 				.attr("width", window.innerWidth)
@@ -89,7 +93,7 @@ export class HomePage {
 
 		if(dir === "next") {
 			this.time = new Date(this.time.setDate(this.time.getDate() + 1));
-		}else {				
+		}else {
 			this.time = new Date(this.time.setDate(this.time.getDate() - 1));
 		}
 
@@ -106,7 +110,7 @@ export class HomePage {
 
 	geolocate() {
 
-		navigator.geolocation.getCurrentPosition(
+		Geolocation.getCurrentPosition({enableHighAccuracy:true, timeout:5000, maximumAge:0}).then(
 			(position) => {
 				this.gmapService.getLocationByCoords(position.coords.latitude, position.coords.longitude).map(res => res.json()).subscribe(data => {
 					if(data.status === "OK") {
@@ -119,14 +123,13 @@ export class HomePage {
 					}
 				});
 
-	        	this.getTides(position.coords.latitude, position.coords.longitude);
+	      this.getTides(position.coords.latitude, position.coords.longitude);
 			},
 
-			(error) => {
-				alert(error.message);
-			},
-			{timeout: 10000, enableHighAccuracy: true}
-	    );
+    )
+    .catch((error) => {
+      alert('Error getting location' +  error);
+    });
 	}
 
 
@@ -171,7 +174,7 @@ export class HomePage {
 	getTides(lat, lng) {
 
 		this.tidesService.getTides(lat, lng, this.time).map(res => res.json()).subscribe(
-            data => {           	
+            data => {
                 this.tides = data;
                 this.checkLocations();
                 this.getExtremeTides();
@@ -195,7 +198,7 @@ export class HomePage {
 			}
 		}
 		return temp;
-		
+
 	}
 
 
@@ -240,7 +243,7 @@ export class HomePage {
 			});
 			index = i;
 
-			// a améliorer pour les soirs 
+			// a améliorer pour les soirs
 			if(+day.getTime() > +this.time.getTime() && find === false) {
 				this.status = this.tides.extremes[i].type === 'High' ? 'up':'down';
 				find = true;
@@ -272,20 +275,20 @@ export class HomePage {
 		    heights.push(this.tides.heights[i].height);
 
 		    if(+date < (+this.time.getTime() / 1000)) {
-		    	currentHeights.push(this.tides.heights[i].height);		    	
+		    	currentHeights.push(this.tides.heights[i].height);
 		    }
 		    if(+date > (+this.time.getTime() / 1000) && found === false ) {
 		    	circlePosition = i - 1;
-		    	found = true;		    	
+		    	found = true;
 		    }
 		}
-		
+
 
 		let minHeight = Math.max.apply(null, heights),
 			maxHeight = Math.min.apply(null, heights);
 
 
-		
+
 		for(let i = 0, j = heights.length; i < j; i++) {
 			let x = i * step,
 				y = (10 + ((heights[i] - minHeight) / (maxHeight - minHeight)) * delta);
@@ -297,7 +300,7 @@ export class HomePage {
 
 		/* la ligne de fond */
 		this.backPath
-			.attr("d", this.line(this.curvePoints));	
+			.attr("d", this.line(this.curvePoints));
 
 		/* la ligne du jour */
 		for(let i = 0, j = currentHeights.length; i < j; i++) {
@@ -308,13 +311,13 @@ export class HomePage {
 
 		this.currentPath
 			.attr('opacity', 1)
-			.attr("d", this.line(this.currentPoints));     
+			.attr("d", this.line(this.currentPoints));
 
 		this.circle
 			.attr("transform", "translate(" + this.currentPoints[0] + ")")
 			.attr('r', 10)
 			.attr('opacity', 0);
-		
+
 		this.fadeState = 'in';
 
 		this.animateIn();
@@ -331,14 +334,13 @@ export class HomePage {
 	}
 
 	animateIn() {
-		
+
 		this.backTotalLength 	= this.backPath.node().getTotalLength();
 		this.currentTotalLength = this.currentPath.node().getTotalLength();
-		
+
 
 		// anime de la ligne de fond
 		this.backPath
-			.attr('opacity', 0)
 			.attr("stroke-dasharray", this.backTotalLength + " " + this.backTotalLength)
 			.attr("stroke-dashoffset", this.backTotalLength)
 			.attr('opacity', 1)
@@ -347,10 +349,8 @@ export class HomePage {
 			.ease("circle")
 			.attr("stroke-dashoffset", 0);
 
-		// Anime de la courbe et du point		 	
-
+		// Anime de la courbe et du point
 		this.currentPath
-			.attr('opacity', 0)
 			.attr("stroke-dasharray", this.currentTotalLength + " " + this.currentTotalLength)
 			.attr("stroke-dashoffset", this.currentTotalLength)
 			.attr('opacity', 1)
@@ -376,12 +376,18 @@ export class HomePage {
 		return new Promise((resolve, reject) => {
   			this.fadeState = 'out'; // for transiotn
 
+  			let self = this;
 
 			this.currentPath
 				.transition()
 				.duration(300)
 				.ease("circle")
-				.attr("stroke-dashoffset", '-' + this.currentTotalLength);
+				.attr("stroke-dashoffset", '-' + this.currentTotalLength)
+				.attr('opacity', 0)
+				.each('end', function() {
+					self.currentPath
+						.attr('opacity', 0);
+				});
 			this.circle
 				.transition()
 				.duration(300)
@@ -392,12 +398,15 @@ export class HomePage {
 				.duration(500)
 				.ease("circle")
 				.attr("stroke-dashoffset", '-' + this.backTotalLength)
-				.delay(300)
-				.each('end', resolve());
+				.each('end', function() {
+					self.backPath
+						.attr('opacity', 0);
+					resolve();
+				});
 
   		});
 
-		
+
 
 	}
 
